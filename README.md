@@ -1,1 +1,2 @@
-# kojinseisaku2
+# kojinseisaku
+個人製作
