@@ -1,5 +1,6 @@
-﻿#include "camera.h"
-#include "appframe.h"
+﻿#include "pch.h"
+#include "camera.h"
+
 
 bool Camera::Initialize()
 {

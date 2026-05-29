@@ -1,5 +1,5 @@
-﻿#include "modeeffekseer.h"
-#include "appframe.h"
+﻿#include "pch.h"
+#include "modeeffekseer.h"
 #include "applicationmain.h"
 #include "applicationglobal.h"
 

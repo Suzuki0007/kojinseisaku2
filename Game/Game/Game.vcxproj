@@ -28,13 +28,19 @@
     <ClInclude Include="source\enemybase.h" />
     <ClInclude Include="source\map.h" />
     <ClInclude Include="source\menuitembase.h" />
+    <ClInclude Include="source\modebattle.h" />
     <ClInclude Include="source\modeeffekseer.h" />
     <ClInclude Include="source\modegame.h" />
     <ClInclude Include="source\modemenu.h" />
     <ClInclude Include="source\modetitle.h" />
     <ClInclude Include="source\objectbase.h" />
+    <ClInclude Include="source\objectfactory.h" />
+    <ClInclude Include="source\objectmanagerbase.h" />
+    <ClInclude Include="source\pch.h" />
     <ClInclude Include="source\player.h" />
     <ClInclude Include="source\playerbase.h" />
+    <ClInclude Include="source\playerfactory.h" />
+    <ClInclude Include="source\PlayerManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\applicationglobal.cpp" />
@@ -46,6 +52,7 @@
     <ClCompile Include="source\enemybase.cpp" />
     <ClCompile Include="source\map.cpp" />
     <ClCompile Include="source\menuitembase.cpp" />
+    <ClCompile Include="source\modebattle.cpp" />
     <ClCompile Include="source\modeeffekseer.cpp" />
     <ClCompile Include="source\modegame.cpp" />
     <ClCompile Include="source\modegamecollision.cpp" />
@@ -54,8 +61,14 @@
     <ClCompile Include="source\modemenu.cpp" />
     <ClCompile Include="source\modetitle.cpp" />
     <ClCompile Include="source\objectbase.cpp" />
+    <ClCompile Include="source\objectmanagerbase.cpp" />
+    <ClCompile Include="source\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="source\player.cpp" />
     <ClCompile Include="source\playerbase.cpp" />
+    <ClCompile Include="source\playerfactory.cpp" />
+    <ClCompile Include="source\PlayerManager.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -68,26 +81,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -164,6 +177,9 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp23</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

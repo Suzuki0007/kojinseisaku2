@@ -1,4 +1,5 @@
-﻿#include "cube.h"
+﻿#include "pch.h"
+#include "cube.h"
 
 // 初期化
 bool Cube::Initialize()

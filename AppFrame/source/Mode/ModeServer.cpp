@@ -1,6 +1,4 @@
-﻿
-#include <cstddef>
-#include "DxLib.h"
+﻿#include "pch.h"
 #include "ModeServer.h"
 
 

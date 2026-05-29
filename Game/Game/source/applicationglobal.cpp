@@ -1,5 +1,6 @@
-﻿#include "applicationglobal.h"
-#include "appframe.h"
+﻿#include "pch.h"
+#include "applicationglobal.h"
+
 
 // 実体
 ApplicationGlobal gGlobal;

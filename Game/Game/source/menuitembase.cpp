@@ -1,4 +1,5 @@
-﻿#include "menuitembase.h"
+﻿#include "pch.h"
+#include "menuitembase.h"
 
 // コンストラクタ
 MenuItemBase::MenuItemBase(void* param, std::string text)

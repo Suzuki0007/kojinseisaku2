@@ -1,4 +1,5 @@
-﻿#include "objectbase.h"
+﻿#include "pch.h"
+#include "objectbase.h"
 
 // 初期化
 bool ObjectBase::Initialize()

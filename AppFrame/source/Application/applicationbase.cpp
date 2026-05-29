@@ -1,5 +1,6 @@
-﻿
-#include "ApplicationBase.h"
+﻿#include "pch.h"
+//#include "ApplicationBase.h"
+
 
 ApplicationBase	*ApplicationBase::_lp_instance = nullptr;
 

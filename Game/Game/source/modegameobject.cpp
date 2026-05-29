@@ -1,4 +1,5 @@
-﻿#include "modegame.h"
+﻿#include "pch.h"
+#include "modegame.h"
 #include "player.h"
 #include "cube.h"
 #include "map.h"
@@ -20,8 +21,10 @@ bool ModeGame::ObjectInitialize()
 	_object.emplace_back(_map);
 
 	// プレイヤー初期化
-	_player = std::make_shared<Player>();
-	_chara.emplace_back(_player);
+	auto* pm = PlayerManager::GetInstance();
+	pm->RegisterType();
+	pm->CreatePlayer("Player");
+	_chara.emplace_back(pm->GetPlayer().get());
 
 	// 敵初期化
 	for(int i = 0; i < ENEMY_COUNT; ++i)

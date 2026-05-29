@@ -1,4 +1,5 @@
-﻿#include "enemybase.h"
+﻿#include "pch.h"
+#include "enemybase.h"
 
 // 初期化
 bool EnemyBase::Initialize()

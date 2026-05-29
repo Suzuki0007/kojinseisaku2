@@ -11,11 +11,8 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
-
 	const VECTOR& GetInputVector() const { return _input_v; }
 	float GetMoveSpeed() const { return _mv_speed; }
-	auto GetLand() const { return _land; }
-	void SetLand(bool land) { _land = land; }
 
 	void SetCamera(Camera* cam)  override { _cam = cam; }
 
@@ -45,24 +42,18 @@ protected:
 	float _mv_speed;
 	VECTOR _input_v;
 	
-	bool _land;// 着地しているかどうか 
-	float _jump_height; // ジャンプの高さ
-	float _gravity; // 重力の強さ
-
 	bool _is_dashing;// ダッシュ中かどうか
 	float _dash_speed;
 	float _dash_time;
 	float _dash_timer;
 	VECTOR _dash_direction;
 
-	
 	bool _is_rolling; 
 	float _roll_speed; 
 	float _roll_time; 
 	float _roll_timer;			// ドッジロール残り時間
 	VECTOR _roll_direction;		// ドッジロール方向
 
-	bool _jump_count;			// ジャンプ回数制限用フラグ
 	float _air_control;			// 空中制御係数
 
 	bool _is_attack;			// 攻撃中かどうか

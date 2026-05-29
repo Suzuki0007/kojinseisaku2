@@ -1,7 +1,7 @@
-﻿#include <fstream>
-#include <iostream>
+﻿#include "pch.h"
 #include "CFile.h"
 #include "../Application/UtilMacro.h"
+
 
 // 読み込み
 CFile::CFile(const std::string filename) {

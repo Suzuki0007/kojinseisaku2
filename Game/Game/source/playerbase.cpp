@@ -1,4 +1,5 @@
-﻿#include "playerbase.h"
+﻿#include "pch.h"
+#include "playerbase.h"
 
 // 初期化
 bool PlayerBase::Initialize()

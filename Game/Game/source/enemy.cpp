@@ -1,4 +1,5 @@
-﻿#include "enemy.h"
+﻿#include "pch.h"
+#include "enemy.h"
 
 // 初期化
 bool Enemy::Initialize()
@@ -13,7 +14,7 @@ bool Enemy::Initialize()
     _total_time = 0.0f;
     _play_time = 0.0f;
 	// 位置、向きの初期化
-	_pos = VGet(100.0f, 0.0f, 0.0f);
+	_pos1 = VGet(100.0f, 0.0f, 0.0f);
 	_dir = VGet(0.0f, 0.0f, -1.0f);// キャラモデルはデフォルトで-Z方向を向いている
 	// 腰位置の設定
 	_col_sub_y = 40.0f;
@@ -114,7 +115,7 @@ bool Enemy::Render()
     }
 
 	// 位置
-	MV1SetPosition(_handle, _pos);
+	MV1SetPosition(_handle, _pos1);
 	// 向きからY軸回転を算出
 	VECTOR vrot = { 0,0,0, };
 	vrot.y = atan2f(-_dir.x, -_dir.z);

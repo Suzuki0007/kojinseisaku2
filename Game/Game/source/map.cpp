@@ -1,4 +1,5 @@
-﻿#include "map.h"
+﻿#include "pch.h"
+#include "map.h"
 
 // 初期化
 bool Map::Initialize()

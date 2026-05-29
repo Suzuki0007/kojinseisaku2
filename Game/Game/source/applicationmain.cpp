@@ -1,5 +1,5 @@
-﻿#include "applicationmain.h"
-#include "appframe.h"
+﻿#include "pch.h"
+#include "applicationmain.h"
 #include "applicationglobal.h"
 #include "modegame.h"
 #include "modetitle.h"
@@ -11,6 +11,18 @@ ApplicationMain g_application_main;
 bool ApplicationMain::Initialize(HINSTANCE hInstance)
 {
 	if(!base::Initialize(hInstance)) { return false; }
+
+	auto padInput = std::make_shared<PadInput>();
+	auto keyboardInput = std::make_shared<KeyboardInput>();
+
+	if(GetJoypadNum() > 0)
+	{
+		InputLocator::Provide(padInput);
+	}
+	else
+	{
+		InputLocator::Provide(keyboardInput);
+	}
 
 	// アプリケーショングローバルの初期化
 	gGlobal.Init();

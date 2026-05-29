@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "charabase.h"
+
 class PlayerBase : public CharaBase
 {
 	typedef CharaBase base;

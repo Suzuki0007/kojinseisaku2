@@ -1,5 +1,5 @@
+#include "pch.h"
 #include "modetitle.h"
-#include "appframe.h"
 #include "modegame.h"
 
 // ‰Šú‰»

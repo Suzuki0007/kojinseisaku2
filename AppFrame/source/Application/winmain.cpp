@@ -5,7 +5,7 @@
 //
 // include 部
 //
-
+#include "pch.h"
 #include "../appframe.h"
 
 

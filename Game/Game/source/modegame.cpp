@@ -1,8 +1,8 @@
-﻿#include "modegame.h"
+﻿#include "pch.h"
+#include "modegame.h"
 #include "applicationmain.h"
 #include "modeeffekseer.h"
 #include "modetitle.h"
-#include <algorithm>
 
 // 初期化
 bool ModeGame::Initialize()
@@ -31,7 +31,8 @@ bool ModeGame::Initialize()
 	}
 
 	_map->SetCamera(_camera);
-	_player->SetCamera(_camera);
+	auto* player = GetPlayer();
+	player->SetCamera(_camera);
 
 	std::vector<VECTOR> cube_positions =
 	{
@@ -83,6 +84,9 @@ bool ModeGame::Initialize()
 		_enemy_alive_list[i] = _enemy[i]->IsAlive();
 	}
 
+	InputDevice& input = InputLocator::Get();
+	input.Update();
+
 	return true;
 }
 
@@ -103,6 +107,11 @@ bool ModeGame::Terminate()
 	_object.clear();
 	delete _camera;
 	return true;
+}
+
+PlayerBase* ModeGame::GetPlayer() const
+{
+	return PlayerManager::GetInstance()->GetPlayer().get();
 }
 
 // 円同士の当たり判定
@@ -129,11 +138,12 @@ bool ModeGame::IsHitCircle(CharaBase* c1, CharaBase* c2)
 bool ModeGame::PlayerCameraInfo()
 {
 	// カメラの位置/視点の移動を、プレイヤーの移動量に追従する
-	VECTOR playermove = VSub(_player->GetPos(), _player->GetOldPos());
+	auto* player = GetPlayer();
+	VECTOR playermove = VSub(player->GetPos(), player->GetOldPos());
 	// 水平移動は従来通り位置を移す
 	_camera->_v_pos = VAdd(_camera->_v_pos, VGet(playermove.x, 0.0f, playermove.z));
 	// 注視点はプレイヤーの現在位置を基準に高さも含めて追従させる
-	VECTOR player_target = _player->GetPos();
+	VECTOR player_target = player->GetPos();
 	player_target.y += 60.0f; // プレイヤーの目線高さなどのオフセット
 	_camera->SetTargetPosition(player_target);
 	return true;
@@ -143,6 +153,8 @@ bool ModeGame::PlayerCameraInfo()
 bool ModeGame::Process()
 {
 	base::Process();
+
+	auto* player = GetPlayer();
 
 	DebugProcess();// デバック処理
 
@@ -184,9 +196,10 @@ bool ModeGame::Process()
 	for(size_t i = 0; i < _enemy.size(); i++)
 	{
 		auto& enemy = _enemy[i];
+
 		if(enemy->IsAlive())
 		{
-			CharaToCharaCollision(_player.get(), enemy.get());
+			CharaToCharaCollision(player, enemy.get());
 			// 敵とキューブの当たり判定
 			for(auto& cube : _cube)
 			{
@@ -216,7 +229,7 @@ bool ModeGame::Process()
 	// プレイヤーとキューブの当たり判定
 	for(auto& cube : _cube)
 	{
-		CharaToCubeCollision(_player.get(), cube.get());
+		CharaToCubeCollision(player, cube.get());
 	}
 
 	LandCheck();

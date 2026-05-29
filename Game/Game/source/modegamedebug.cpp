@@ -1,4 +1,5 @@
-﻿#include "modegame.h"
+﻿#include "pch.h"
+#include "modegame.h"
 #include "menuitembase.h"
 
 // デバックの初期化
@@ -75,7 +76,9 @@ bool ModeGame::DebugRender()
 
 	if(_d_view_collision)
 	{
-		auto& attack_list = _player->GetAttackCollisionList();
+		auto* player = PlayerManager::GetInstance()->GetPlayer().get();
+		if(!player) { return false; }
+		auto& attack_list = player->GetAttackCollisionList();
 		for(auto& attack : attack_list)
 		{
 			// 有効レンジのみ描画

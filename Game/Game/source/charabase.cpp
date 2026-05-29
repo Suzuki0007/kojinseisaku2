@@ -1,4 +1,5 @@
-﻿#include "charabase.h"
+﻿#include "pch.h"
+#include "charabase.h"
 
 // 初期化
 bool CharaBase::Initialize()
@@ -8,7 +9,7 @@ bool CharaBase::Initialize()
 	_attach_index = -1;
 	_total_time = 0.0f;
 	_play_time = 0.0f;
-	_pos = VGet(0.0f, 0.0f, 0.0f);
+	_pos1 = VGet(0.0f, 0.0f, 0.0f);
 	_old_pos = VGet(0.0f, 0.0f, 0.0f);
 	_dir = VGet(0.0f, 0.0f, 0.0f);
 	_col_sub_y = 0.0f;
@@ -23,6 +24,7 @@ bool CharaBase::Initialize()
 bool CharaBase::Terminate()
 {
 	base::Terminate();
+	ClearComponent();
 	return true;
 }
 

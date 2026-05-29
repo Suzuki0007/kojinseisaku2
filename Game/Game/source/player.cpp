@@ -1,11 +1,11 @@
-﻿#include "player.h"
-#include "appframe.h"
+﻿#include "pch.h"
+#include "player.h"
 
 // プレイヤーの移動
 bool Player::PlayerMove(VECTOR v)
 {
-	_pos.x += v.x;
-	_pos.z += v.z;
+	_pos1.x += v.x;
+	_pos1.z += v.z;
 	return true;
 }
 
@@ -21,7 +21,7 @@ bool Player::Initialize()
 	_total_time = 0.0f;
 	_play_time = 0.0f;
 	// 位置、向きの初期化
-	_pos = VGet(0.0f, 0.0f, 0.0f); // 初期位置が同じだが、押し出され処理のおかげで位置がずれる
+	_pos1 = VGet(0.0f, 0.0f, 0.0f); // 初期位置が同じだが、押し出され処理のおかげで位置がずれる
 	_dir = VGet(0.0f, 0.0f, -1.0f);// キャラモデルはデフォルトで-Z方向を向いている
 	// 腰位置の設定
 	_col_sub_y = 40.0f;
@@ -32,7 +32,7 @@ bool Player::Initialize()
 	_mv_speed = 6.0f;
 	// ジャンプ、重力関連初期化
 	_land = true;
-	_jump_height = 20;
+	_jumpHeight = 20;
 	_gravity = 0.0f;
 	// ダッシュ関連初期化
 	_is_dashing = false;
@@ -48,7 +48,7 @@ bool Player::Initialize()
 	_roll_timer = 0.0f;						// ドッジロール残り時間
 	_roll_direction = VGet(0.0f, 0.0f, 0.0f);	// ドッジロール方向
 
-	_jump_count = true;
+	_jumpCount = true;
 	_air_control = 1.0f;
 
 	_air_attack_used = false;	// 空中攻撃フラグ初期化
@@ -114,8 +114,11 @@ bool Player::Process()
 	int key = ApplicationBase::GetInstance()->GetKey();
 	int trg = ApplicationBase::GetInstance()->GetTrg();
 
+	InputDevice& input = InputLocator::Get();
+	input.Update();
+
 	// 処理前の位置を保存
-	_old_pos = _pos;
+	_old_pos = _pos1;
 
 	if(_land)
 	{
@@ -134,20 +137,21 @@ bool Player::Process()
 
 	if((key & (PAD_INPUT_7 | PAD_INPUT_8)) == 0)
 	{
+		InputDevice& input = InputLocator::Get();
 
-		if(key & PAD_INPUT_DOWN)
+		if(input.IsPress(InputButton::CommandDown))
 		{
 			v.x = 1;
 		}
-		if(key & PAD_INPUT_UP)
+		if(input.IsPress(InputButton::CommandUp))
 		{
 			v.x = -1;
 		}
-		if(key & PAD_INPUT_LEFT)
+		if(input.IsPress(InputButton::CommandLeft))
 		{
 			v.z = -1;
 		}
-		if(key & PAD_INPUT_RIGHT)
+		if(input.IsPress(InputButton::CommandRight))
 		{
 			v.z = 1;
 		}
@@ -169,9 +173,9 @@ bool Player::Process()
 		if(_land == true)
 		{
 			// ジャンプ
-			_jump_count = false;
-			_gravity = _jump_height;
-			_pos.y += _gravity;
+			_jumpCount = false;
+			_gravity = _jumpHeight;
+			_pos1.y += _gravity;
 			_status = STATUS::JUMP;
 			_land = false;
 		}
@@ -282,22 +286,22 @@ bool Player::Process()
 				attack_move_speed = 8.0f;
 			}
 			VECTOR forward_dir = VNorm(_dir);
-			_pos.x += forward_dir.x * attack_move_speed;
-			_pos.z += forward_dir.z * attack_move_speed;
+			_pos1.x += forward_dir.x * attack_move_speed;
+			_pos1.z += forward_dir.z * attack_move_speed;
 		}
 
 		// 空中で攻撃している場合は重力を適用
 		if(!_land)
 		{
 			_gravity -= 0.5f;
-			_pos.y += _gravity;
+			_pos1.y += _gravity;
 
-			if(_pos.y <= 0.0f)
+			if(_pos1.y <= 0.0f)
 			{
-				_pos.y = 0.0f;
+				_pos1.y = 0.0f;
 				_land = true;
 				_gravity = 0.0f;
-				_jump_count = true;
+				_jumpCount = true;
 				_air_attack_used = false;
 			}
 		}
@@ -306,17 +310,17 @@ bool Player::Process()
 	{
 		// 重力処理
 		_gravity -= 0.98f;
-		_pos.y += _gravity;
+		_pos1.y += _gravity;
 		if(_gravity < 0.0f)
 		{
 			_status = STATUS::FALL;
 		}
-		if(_pos.y <= 0.0f)
+		if(_pos1.y <= 0.0f)
 		{
-			_pos.y = 0.0f;
+			_pos1.y = 0.0f;
 			_land = true;
 			_gravity = 0.0f;
-			_jump_count = true;
+			_jumpCount = true;
 			_is_dashing = false;
 			_dash_timer = 0.0f;
 			_air_attack_used = false;
@@ -327,8 +331,8 @@ bool Player::Process()
 		{
 			if(_dash_timer > 0.0f)
 			{
-				_pos.x += _dash_direction.x * _dash_speed;
-				_pos.z += _dash_direction.z * _dash_speed;
+				_pos1.x += _dash_direction.x * _dash_speed;
+				_pos1.z += _dash_direction.z * _dash_speed;
 				_dash_timer -= 1.0f;
 			}
 			else
@@ -342,8 +346,8 @@ bool Player::Process()
 			// 空中通常移動（v はワールド移動量）
 			if(VSize(v) > 0.0f)
 			{
-				_pos.x += v.x * _air_control;
-				_pos.z += v.z * _air_control;
+				_pos1.x += v.x * _air_control;
+				_pos1.z += v.z * _air_control;
 				// 軸ロック中は向きを固定
                 _dir = v;
 			}
@@ -357,8 +361,8 @@ bool Player::Process()
 			{
 				float ratio = _roll_timer / _roll_time;
 				float speed = _roll_speed * (ratio * ratio);
-				_pos.x += _roll_direction.x * speed;
-				_pos.z += _roll_direction.z * speed;
+				_pos1.x += _roll_direction.x * speed;
+				_pos1.z += _roll_direction.z * speed;
 				_dir = _roll_direction;
 				_roll_timer -= 1.0f;
 				_status = STATUS::ROLLING;
@@ -516,7 +520,7 @@ bool Player::Render()
     }
 
     // 位置
-    MV1SetPosition(_handle, _pos);
+    MV1SetPosition(_handle, _pos1);
     // 向きからY軸回転を算出
     VECTOR vrot = { 0,0,0, };
     vrot.y = atan2(_dir.x * -1, _dir.z * -1);// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)

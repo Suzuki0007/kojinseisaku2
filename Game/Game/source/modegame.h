@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "appframe.h"
+//#include "appframe.h"
 #include <string>
 #include <vector>
 #include <memory>
@@ -7,10 +7,11 @@
 #include "charabase.h"
 #include "objectbase.h"
 #include "camera.h"
-#include "player.h"
+#include "playerbase.h"
 #include "enemy.h"
 #include "map.h"
 #include "cube.h"
+#include "PlayerManager.h"
 
 #define CUBE_COUNT 6
 #define ENEMY_COUNT 6
@@ -38,7 +39,8 @@ public:
 	bool IsHitCircle(CharaBase* c1, CharaBase* c2);
 	bool IsHitCircle(CharaBase* target)
 	{
-		return IsHitCircle(_player.get(), target);
+		auto* player = PlayerManager::GetInstance()->GetPlayer().get();
+		return IsHitCircle(player, target);
 	}
 
 	// 当たり判定処理
@@ -59,13 +61,16 @@ public:
 	// オブジェクト関数
 	bool ObjectInitialize();
 
+private:
+	// プレイヤーのヘルパー関数
+	PlayerBase* GetPlayer() const;
+
 protected:
 	Camera* _camera;
 
 	// キャラクタ管理
 	std::vector<std::shared_ptr<CharaBase>> _chara;
 	std::vector<std::shared_ptr<ObjectBase>> _object;
-	std::shared_ptr<Player> _player;
 	// マップ
 	std::shared_ptr<Map> _map;
 	// キューブ

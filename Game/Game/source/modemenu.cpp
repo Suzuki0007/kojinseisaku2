@@ -1,5 +1,5 @@
-﻿#include "modemenu.h"
-#include "appframe.h"
+﻿#include "pch.h"
+#include "modemenu.h"
 #include "applicationmain.h"
 #include "applicationglobal.h"
 #include "menuitembase.h"
