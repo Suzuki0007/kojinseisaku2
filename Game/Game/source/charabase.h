@@ -30,9 +30,6 @@ public:
 	const Vec4& GetPos() const { return _pos; }
 	const Vec4& GetOldPos() const { return _oldPos; }
 	const Vec4& SetPos(const Vec4& pos) { return _pos = pos; }
-
-	const VECTOR& GetPos() const { return _pos1; }
-	const VECTOR& GetOldPos() const { return _old_pos; }
 	auto GetColSubY() const { return _col_sub_y; }
 
 	const VECTOR& SetPos(const VECTOR& pos) { return _pos1 = pos; }

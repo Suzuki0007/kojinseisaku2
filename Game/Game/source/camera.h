@@ -11,14 +11,14 @@ public:
 	virtual bool Render();
 
     // 外部からターゲット位置を設定できるように追加
-    void SetTargetPosition(const VECTOR& t) { _v_target = t; _height_y = t.y; }
+    void SetTargetPosition(const Vec4& t) { _v_target = t; _height_y = t.y; }
 
 	// 外部から角度を取得・設定できるように追加
 	float GetAngle() const { return _angle; }
 	void SetAngle(float angle) { _angle = angle; }
 
-	VECTOR _v_pos;
-	VECTOR _v_target;
+	Vec4 _v_pos;
+	Vec4 _v_target;
 	float _clip_near;
 	float _clip_far;
 

@@ -139,11 +139,11 @@ bool ModeGame::PlayerCameraInfo()
 {
 	// カメラの位置/視点の移動を、プレイヤーの移動量に追従する
 	auto* player = GetPlayer();
-	VECTOR playermove = VSub(player->GetPos(), player->GetOldPos());
+	Vec4 playermove = v::VSub(player->GetPos(), player->GetOldPos());
 	// 水平移動は従来通り位置を移す
-	_camera->_v_pos = VAdd(_camera->_v_pos, VGet(playermove.x, 0.0f, playermove.z));
+	_camera->_v_pos = v::VAdd(_camera->_v_pos, v::VGet(playermove.x, 0.0f, playermove.z));
 	// 注視点はプレイヤーの現在位置を基準に高さも含めて追従させる
-	VECTOR player_target = player->GetPos();
+	Vec4 player_target = player->GetPos();
 	player_target.y += 60.0f; // プレイヤーの目線高さなどのオフセット
 	_camera->SetTargetPosition(player_target);
 	return true;
@@ -290,7 +290,7 @@ bool ModeGame::Render()
 
 
 	// カメラ設定更新
-	SetCameraPositionAndTarget_UpVecY(_camera->_v_pos, _camera->_v_target);
+	SetCameraPositionAndTarget_UpVecY(VC::VecToDxLib(_camera->_v_pos), VC::VecToDxLib(_camera->_v_target));
 	SetCameraNearFar(_camera->_clip_near, _camera->_clip_far);
 
 	// キャラを描画（生存しているもののみ）

@@ -19,9 +19,9 @@ bool ModeGame::EscapeCollision()
 	for(int i = 0; i < sizeof(escapeTbl) / sizeof(escapeTbl[0]); i++)
 	{
 		// 移動前の位置を保存
-		VECTOR oldvPos = player->GetPos();
-		VECTOR v = player->GetInputVector();
-		VECTOR oldv = v;
+		Vec4 oldvPos = player->GetPos();
+		Vec4 v = player->GetInputVector();
+		Vec4 oldv = v;
 		float rad = atan2((float)v.z, (float)v.x);
 		float inputLen = sqrt(v.z * v.z + v.x * v.x);
 		if(inputLen < 0.01f)
@@ -40,7 +40,7 @@ bool ModeGame::EscapeCollision()
 		v.z = sin(rad + camrad + escape_rad) * length;
 
 		// vの分移動
-		player->SetPos(VAdd(player->GetPos(), v));
+		player->SetPos(v::VAdd(player->GetPos(), v));
 
 		// コリジョン処理しないならループから抜ける
 		if(!_d_use_collision)
@@ -54,12 +54,12 @@ bool ModeGame::EscapeCollision()
 
 		// 主人公の腰位置から下方向への直線
 		hitPoly = MV1CollCheck_Line(_map->GetHandleMap(), _map->GetFrameMapCollision(),
-			VAdd(player->GetPos(), VGet(0, player->GetColSubY(), 0)), VAdd(player->GetPos(), VGet(0, -99999.f, 0)));
+			v::VAdd(player->GetPos(), v::VGet(0, player->GetColSubY(), 0)), v::VAdd(player->GetPos(), v::VGet(0, -99999.f, 0)));
 		if(hitPoly.HitFlag)
 		{
 			// 当たった
 			// 当たったY位置をキャラ座標にする
-			VECTOR tmpPos = player->GetPos();
+			Vec4 tmpPos = player->GetPos();
 			tmpPos.y = hitPoly.HitPosition.y;
 			player->SetPos(tmpPos);
 
@@ -86,16 +86,16 @@ bool ModeGame::CharaToCharaCollision(CharaBase* c1, CharaBase* c2)
 	}
 
 	// カプセル上下を生成（top: +Y, bottom: -Y）
-	VECTOR c1_pos = c1->GetPos();
-	VECTOR c2_pos = c2->GetPos();
+	Vec4 c1_pos = c1->GetPos();
+	Vec4 c2_pos = c2->GetPos();
 
 	float c1_half = c1->GetColSubY();
 	float c2_half = c2->GetColSubY();
 
-	VECTOR c1_top = VAdd(c1_pos, VGet(0.0f, c1_half, 0.0f));
-	VECTOR c1_bottom = VAdd(c1_pos, VGet(0.0f, -c1_half, 0.0f));
-	VECTOR c2_top = VAdd(c2_pos, VGet(0.0f, c2_half, 0.0f));
-	VECTOR c2_bottom = VAdd(c2_pos, VGet(0.0f, -c2_half, 0.0f));
+	Vec4 c1_top = v::VAdd(c1_pos, v::VGet(0.0f, c1_half, 0.0f));
+	Vec4 c1_bottom = v::VAdd(c1_pos, v::VGet(0.0f, -c1_half, 0.0f));
+	Vec4 c2_top = v::VAdd(c2_pos, v::VGet(0.0f, c2_half, 0.0f));
+	Vec4 c2_bottom = v::VAdd(c2_pos, v::VGet(0.0f, -c2_half, 0.0f));
 
 	float c1_r = (float)c1->GetCollisionR();
 	float c2_r = (float)c2->GetCollisionR();
@@ -151,7 +151,7 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 	}
 
 	mymath::AABB box = cube->GetAABB();
-	VECTOR pos = chara->GetPos();
+	Vec4 pos = chara->GetPos();
 	float r = (float)chara->GetCollisionR();
 
 	if(!IsHitSphereAABB(pos, r, box))
@@ -243,7 +243,7 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 		}
 
 		// 位置はキューブ上に合わせるが、攻撃中なら着地フラグは次フレーム以降に任せる
-		VECTOR tmpPos = chara->GetPos();
+		Vec4 tmpPos = chara->GetPos();
 		float y_offset = 0.0f;  // 必要なら調整
 		tmpPos.y = box.max.y + y_offset;
 		chara->SetPos(tmpPos);
@@ -261,8 +261,8 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 		hitpoly = MV1CollCheck_Line(
 			_map->GetHandleMap(),
 			_map->GetFrameMapCollision(),
-			VAdd(chara->GetPos(), VGet(0, chara->GetColSubY(), 0)),
-			VAdd(chara->GetPos(), VGet(0, -9999.f, 0))
+			v::VAdd(chara->GetPos(), v::VGet(0, chara->GetColSubY(), 0)),
+			v::VAdd(chara->GetPos(), v::VGet(0, -9999.f, 0))
 		);
 		if(hitpoly.HitFlag)
 		{
@@ -271,7 +271,7 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 			if(_landed_on_up)
 			{
 				//当たったY位置をキャラ座標にする
-				VECTOR tmpPos = chara->GetPos();
+				Vec4 tmpPos = chara->GetPos();
 				tmpPos.y = hitpoly.HitPosition.y;
 				chara->SetPos(tmpPos);
 				_player->SetLand(true);
@@ -284,7 +284,7 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 				}
 				else
 				{
-					VECTOR tmpPos = chara->GetPos();
+					Vec4 tmpPos = chara->GetPos();
 					tmpPos.y = ground_y;
 					chara->SetPos(tmpPos);
 					_player->SetLand(true);
@@ -352,7 +352,7 @@ bool ModeGame::PushChara(CharaBase* move, CharaBase* stop)
 	}
 
 	// 移動前の位置を保存
-	VECTOR oldpos = move->GetPos();
+	Vec4 oldpos = move->GetPos();
 
 	// [stop]の半径に当たらない位置まで、[move]を押し出す
 	// [stop]の中心位置から、[move]の中心位置までの角度を得る
@@ -361,7 +361,7 @@ bool ModeGame::PushChara(CharaBase* move, CharaBase* stop)
 
 	// [stop]の中心位置から、rad角度で [stop].r+[move].r の距離の位置に、[move]の中心位置を設定する
 	float lenght = stop->GetCollisionR() + move->GetCollisionR() + 2.0f;
-	VECTOR newPos = move->GetPos();
+	Vec4 newPos = move->GetPos();
 	newPos.x = stop->GetPos().x + cos(rad) * lenght;
 	newPos.z = stop->GetPos().z + sin(rad) * lenght;
 	move->SetPos(newPos);
@@ -376,12 +376,12 @@ bool ModeGame::PushChara(CharaBase* move, CharaBase* stop)
 		hitpoly = MV1CollCheck_Line(
 			_map->GetHandleMap(),
 			_map->GetFrameMapCollision(),
-			VAdd(move->GetPos(), VGet(0, move->GetColSubY(), 0)), VAdd(move->GetPos(), VGet(0, -9999.f, 0))
+			v::VAdd(move->GetPos(), v::VGet(0, move->GetColSubY(), 0)), v::VAdd(move->GetPos(), v::VGet(0, -9999.f, 0))
 		);
 		if(hitpoly.HitFlag)
 		{
 			// 当たったY位置をキャラ座標にする
-			VECTOR tmpPos = move->GetPos();
+			Vec4 tmpPos = move->GetPos();
 			tmpPos.y = hitpoly.HitPosition.y;
 			move->SetPos(tmpPos);
 		}
@@ -435,8 +435,8 @@ bool ModeGame::UpdateCheckAttackCollision()
 				// 剣の根元と先端のローカル座標
 				// 注意: モデルによって剣の向き(どの軸が刃方向か)が異なる場合がある
 				// 必要に応じて (0,0,150) を (150,0,0) や (0,0,-150) に変更してください
-				VECTOR local_under_pos = VGet(50.0f, 50.0f, -100.0f);
-				VECTOR local_over_pos = VGet(50.0f, 50.0f, -100.0f);
+				Vec4 local_under_pos = v::VGet(50.0f, 50.0f, -100.0f);
+				Vec4 local_over_pos = v::VGet(50.0f, 50.0f, -100.0f);
 
 				// ワールド座標に変換
 				attack.capsule.underpos = VTransform(local_under_pos, frame_world);
@@ -453,13 +453,13 @@ bool ModeGame::UpdateCheckAttackCollision()
 				}
 
 				// 当たり判定チェック
-				VECTOR c1_top = attack.capsule.overpos;
-				VECTOR c1_bottom = attack.capsule.underpos;
+				Vec4 c1_top = attack.capsule.overpos;
+				Vec4 c1_bottom = attack.capsule.underpos;
 				float c1_r = attack.capsule.r;
-				VECTOR c2_pos = enemy->GetPos();
+				Vec4 c2_pos = enemy->GetPos();
 				float c2_half = enemy->GetColSubY();
-				VECTOR c2_top = VAdd(c2_pos, VGet(0.0f, c2_half, 0.0f));
-				VECTOR c2_bottom = VAdd(c2_pos, VGet(0.0f, -c2_half, 0.0f));
+				Vec4 c2_top = v::VAdd(c2_pos, v::VGet(0.0f, c2_half, 0.0f));
+				Vec4 c2_bottom = v::VAdd(c2_pos, v::VGet(0.0f, -c2_half, 0.0f));
 				float c2_r = (float)enemy->GetCollisionR();
 
 				if(HitCheck_Capsule_Capsule(c1_top, c1_bottom, c1_r, c2_top, c2_bottom, c2_r))

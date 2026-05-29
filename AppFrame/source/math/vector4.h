@@ -176,23 +176,23 @@ public:
 	// 各成分の最小値
 	NDCE static Vector4 Min(const Vector4& a, const Vector4& b)
 	{
-		return Vector4
-		(
-			std::min(a.x, b.x),
-			std::min(a.y, b.y),
-			std::min(a.z, b.z),
-			std::min(a.w, b.w)
-		);
+		return
+		{
+			(std::ranges::min)(a.x, b.x),
+			(std::ranges::min)(a.y, b.y),
+			(std::ranges::min)(a.z, b.z),
+			(std::ranges::min)(a.w, b.w)
+		};
 	}
 	// 各成分の最大値
 	NDCE static Vector4 Max(const Vector4& a, const Vector4& b)
 	{
 		return Vector4
 		(
-			std::max(a.x, b.x),
-			std::max(a.y, b.y),
-			std::max(a.z, b.z),
-			std::max(a.w, b.w)
+			(std::ranges::max)(a.x, b.x),
+			(std::ranges::max)(a.y, b.y),
+			(std::ranges::max)(a.z, b.z),
+			(std::ranges::max)(a.w, b.w)
 		);
 	}
 
@@ -201,10 +201,10 @@ public:
 	{
 		return Vector4
 		(
-			std::clamp(value.x, min.x, max.x),
-			std::clamp(value.y, min.y, max.y),
-			std::clamp(value.z, min.z, max.z),
-			std::clamp(value.w, min.w, max.w)
+			(std::ranges::clamp)(value.x, min.x, max.x),
+			(std::ranges::clamp)(value.y, min.y, max.y),
+			(std::ranges::clamp)(value.z, min.z, max.z),
+			(std::ranges::clamp)(value.w, min.w, max.w)
 		);
 	}
 

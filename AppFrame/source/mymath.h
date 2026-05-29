@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "math/vectorconvert.h"
 // 計算用マクロ
 #define	PI	(3.1415926535897932386f)
 #define	DEG2RAD(x)			( ((x) / 180.0f ) * PI )
@@ -10,8 +11,8 @@ namespace mymath
 	// 当たり判定用構造体
 	struct COLLISIONCAPSULE
 	{
-		VECTOR underpos;		// カプセルの下端座標
-		VECTOR overpos;			// カプセルの上端座標
+		Vec4 underpos;		// カプセルの下端座標
+		Vec4 overpos;			// カプセルの上端座標
 		float r;				// カプセルの半径
 		int modelhandle;		// 追従させるモデルのハンドル
 		int framenum;			// 追従させるモデルのフレーム番号
@@ -24,7 +25,7 @@ namespace mymath
 		COLLISIONCAPSULE oldcapsule; // 1フレーム前の攻撃判定用カプセル
 		std::string attackChara; // 攻撃をしたキャラクターの名前
 		MATRIX modelId; // 1フレーム前の追従させるモデルのフレーム変換行列
-		VECTOR vector;	// 攻撃の向き
+		Vec4 vector;	// 攻撃の向き
 		float damage;	// ダメージ量
 		int waittime;	// 攻撃が有効になるまでの時間
 		int activetime;	// 攻撃が有効な時間
@@ -36,15 +37,15 @@ namespace mymath
 	// AABB(Axis-Aligned Bounding Box(軸に平行な境界ボックス))構造体
 	struct AABB
 	{
-		VECTOR min;
-		VECTOR max;
+		Vec4 min;
+		Vec4 max;
 	};
 
 	// 球とAABBの当たり判定
-	static inline bool IsHitSphereAABB(const VECTOR& center, float radius, const AABB& box)
+	static inline bool IsHitSphereAABB(const Vec4& center, float radius, const AABB& box)
 	{
 
-		VECTOR closest;// 一番近い点
+		Vec4 closest;// 一番近い点
 		// x軸方向
 		if(center.x < box.min.x)
 		{

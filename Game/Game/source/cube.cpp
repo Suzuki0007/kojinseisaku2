@@ -10,12 +10,12 @@ bool Cube::Initialize()
 	// 地面全体の中心を原点にする
 	_half_polygon_size = GROUND_POLYGON_SIZE * 0.5f;
 	// 頂点用の固定情報
-	_cube_normal_front = VGet(0.0f, 0.0f, -1.0f);
-	_cube_normal_right = VGet(1.0f, 0.0f, 0.0f);
-	_cube_normal_back = VGet(0.0f, 0.0f, 1.0f);
-	_cube_normal_left = VGet(-1.0f, 0.0f, 0.0f);
-	_cube_normal_top = VGet(0.0f, 1.0f, 0.0f);
-	_cube_normal_bottom = VGet(0.0f, -1.0f, 0.0f);
+	_cube_normal_front = v::VGet(0.0f, 0.0f, -1.0f);
+	_cube_normal_right = v::VGet(1.0f, 0.0f, 0.0f);
+	_cube_normal_back = v::VGet(0.0f, 0.0f, 1.0f);
+	_cube_normal_left = v::VGet(-1.0f, 0.0f, 0.0f);
+	_cube_normal_top = v::VGet(0.0f, 1.0f, 0.0f);
+	_cube_normal_bottom = v::VGet(0.0f, -1.0f, 0.0f);
 	_cube_normal_list =
 	{
 		_cube_normal_front,
@@ -28,14 +28,14 @@ bool Cube::Initialize()
 	_diffuse = GetColorU8(255, 255, 255, 255);
 	_specular = GetColorU8(0, 0, 0, 0);
 	// 基本の8頂点の座標
-	_cube_pos_0 = VGet(-_half_polygon_size,  _half_polygon_size, -_half_polygon_size);
-	_cube_pos_1 = VGet(-_half_polygon_size,  _half_polygon_size,  _half_polygon_size);
-	_cube_pos_2 = VGet( _half_polygon_size,  _half_polygon_size, -_half_polygon_size);
-	_cube_pos_3 = VGet( _half_polygon_size,  _half_polygon_size,  _half_polygon_size);
-	_cube_pos_4 = VGet(-_half_polygon_size, -_half_polygon_size, -_half_polygon_size);
-	_cube_pos_5 = VGet(-_half_polygon_size, -_half_polygon_size,  _half_polygon_size);
-	_cube_pos_6 = VGet( _half_polygon_size, -_half_polygon_size, -_half_polygon_size);
-	_cube_pos_7 = VGet( _half_polygon_size, -_half_polygon_size,  _half_polygon_size);
+	_cube_pos_0 = v::VGet(-_half_polygon_size,  _half_polygon_size, -_half_polygon_size);
+	_cube_pos_1 = v::VGet(-_half_polygon_size,  _half_polygon_size,  _half_polygon_size);
+	_cube_pos_2 = v::VGet( _half_polygon_size,  _half_polygon_size, -_half_polygon_size);
+	_cube_pos_3 = v::VGet( _half_polygon_size,  _half_polygon_size,  _half_polygon_size);
+	_cube_pos_4 = v::VGet(-_half_polygon_size, -_half_polygon_size, -_half_polygon_size);
+	_cube_pos_5 = v::VGet(-_half_polygon_size, -_half_polygon_size,  _half_polygon_size);
+	_cube_pos_6 = v::VGet( _half_polygon_size, -_half_polygon_size, -_half_polygon_size);
+	_cube_pos_7 = v::VGet( _half_polygon_size, -_half_polygon_size,  _half_polygon_size);
 	_cube_pos_front =
 	{
 		_cube_pos_4,
@@ -89,7 +89,7 @@ bool Cube::Initialize()
 	_u_list = { 0.0f, 0.0f, 1.0f, 1.0f };
 	_v_list = { 0.0f, 1.0f, 0.0f, 1.0f };
 
-	_cube_pos = VGet(300.0f, 0.0f, 0.0f);
+	_cube_pos =	v::VGet(300.0f, 0.0f, 0.0f);
 
 	UpdateAABB();
 	return true;
@@ -98,17 +98,17 @@ bool Cube::Initialize()
 // AABB更新
 bool Cube::UpdateAABB()
 {
-	std::array<VECTOR, 8> pt =
+	std::array<Vec4, 8> pt =
 	{
 		_cube_pos_0, _cube_pos_1, _cube_pos_2, _cube_pos_3,
 		_cube_pos_4, _cube_pos_5, _cube_pos_6, _cube_pos_7
 	};
 
-	VECTOR min = VAdd(pt[0], _cube_pos);
-	VECTOR max = min;
+	Vec4 min = v::VAdd(pt[0], _cube_pos);
+	Vec4 max = min;
 	for(auto& p : pt)
 	{
-		VECTOR wp = VAdd(p, _cube_pos);
+		Vec4 wp = v::VAdd(p, _cube_pos);
 		if(wp.x < min.x)
 		{
 			min.x = wp.x;
@@ -164,9 +164,9 @@ bool Cube::Process()
 		VERTEX3D vertex;
 		auto face_vertices = _cube_pos_list[face];
 
-		VECTOR base = face_vertices[j];
+		Vec4 base = face_vertices[j];
 
-		vertex.pos = VAdd(base,_cube_pos);
+		vertex.pos = v::VAdd(base,_cube_pos);
 		vertex.norm = _cube_normal_list[face];
 		vertex.dif = _diffuse;
 		vertex.spc = _specular;

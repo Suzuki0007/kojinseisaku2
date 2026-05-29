@@ -4,8 +4,8 @@
 
 bool Camera::Initialize()
 {
-	_v_pos = VGet(0.0f, 90.0f, -300.0f);
-	_v_target = VGet(0.0f, 60.0f, 0.0f);
+	_v_pos = v::VGet(0.0f, 90.0f, -300.0f);
+	_v_target = v::VGet(0.0f, 60.0f, 0.0f);
 	_clip_near = 2.0f;
 	_clip_far = 10000.0f;
 

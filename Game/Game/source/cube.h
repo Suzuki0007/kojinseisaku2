@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "objectbase.h"
+#include "pch.h"
 
 class Cube : public ObjectBase
 {
@@ -27,8 +28,8 @@ public:
 	size_t GetVertexCount() const { return _cube_vertex.size(); }
 
 	// 位置操作
-	const VECTOR& GetPosition() const { return _cube_pos; }
-	void SetPosition(const VECTOR& pos) { _cube_pos = pos; }
+	const Vec4& GetPosition() const { return _cube_pos; }
+	void SetPosition(const Vec4& pos) { _cube_pos = pos; }
 
 protected:
 	int _cube_handle;
@@ -36,32 +37,32 @@ protected:
 	std::vector<unsigned short> _cube_index;
 
 	// 頂点用の固定情報
-	VECTOR _cube_normal_front;
-	VECTOR _cube_normal_right;
-	VECTOR _cube_normal_back;
-	VECTOR _cube_normal_left;
-	VECTOR _cube_normal_top;
-	VECTOR _cube_normal_bottom;
-	std::array<VECTOR, 6> _cube_normal_list;
+	Vec4 _cube_normal_front;
+	Vec4 _cube_normal_right;
+	Vec4 _cube_normal_back;
+	Vec4 _cube_normal_left;
+	Vec4 _cube_normal_top;
+	Vec4 _cube_normal_bottom;
+	std::array<Vec4, 6> _cube_normal_list;
 	// 基本の8頂点の座標
-	VECTOR _cube_pos_0;
-	VECTOR _cube_pos_1;
-	VECTOR _cube_pos_2;
-	VECTOR _cube_pos_3;
-	VECTOR _cube_pos_4;
-	VECTOR _cube_pos_5;
-	VECTOR _cube_pos_6;
-	VECTOR _cube_pos_7;
-	std::array<VECTOR, 4> _cube_pos_front;
-	std::array<VECTOR, 4> _cube_pos_right;
-	std::array<VECTOR, 4> _cube_pos_back;
-	std::array<VECTOR, 4> _cube_pos_left;
-	std::array<VECTOR, 4> _cube_pos_top;
-	std::array<VECTOR, 4> _cube_pos_bottom;
+	Vec4 _cube_pos_0;
+	Vec4 _cube_pos_1;
+	Vec4 _cube_pos_2;
+	Vec4 _cube_pos_3;
+	Vec4 _cube_pos_4;
+	Vec4 _cube_pos_5;
+	Vec4 _cube_pos_6;
+	Vec4 _cube_pos_7;
+	std::array<Vec4, 4> _cube_pos_front;
+	std::array<Vec4, 4> _cube_pos_right;
+	std::array<Vec4, 4> _cube_pos_back;
+	std::array<Vec4, 4> _cube_pos_left;
+	std::array<Vec4, 4> _cube_pos_top;
+	std::array<Vec4, 4> _cube_pos_bottom;
 
-	std::vector<std::array<VECTOR, 4>> _cube_pos_list;
+	std::vector<std::array<Vec4, 4>> _cube_pos_list;
 
-	VECTOR _cube_pos;
+	Vec4 _cube_pos;
 
 	mymath::AABB _aabb;
 

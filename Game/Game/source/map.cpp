@@ -152,7 +152,7 @@ bool Map::Render()
 	// シャドウマップに描画する範囲を設定
 	// カメラの注視点を中心にする
 	float lenght = 800.f;
-	SetShadowMapDrawArea(_handle_shadow_map, VAdd(_cam->_v_target, VGet(-lenght, -1.0f, -lenght)), VAdd(_cam->_v_target, VGet(lenght, lenght, lenght)));
+	SetShadowMapDrawArea(_handle_shadow_map, v::VAdd(_cam->_v_target, v::VGet(-lenght, -1.0f, -lenght)), v::VAdd(_cam->_v_target, v::VGet(lenght, lenght, lenght)));
 
 	// 2回まわして、path = 0: シャドウマップへの描画、path = 1: モデルの：描画
 	for(int path = 0; path < 2; path++)

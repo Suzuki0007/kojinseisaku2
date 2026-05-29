@@ -175,7 +175,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="source\Manager\timemanager.h" />
+    <ClInclude Include="source\math\matrix4.h" />
     <ClInclude Include="source\math\vector4.h" />
+    <ClInclude Include="source\math\vector4operator.h" />
+    <ClInclude Include="source\math\vectorconvert.h" />
     <ClInclude Include="source\Mode\ModeBase.h" />
     <ClInclude Include="source\Mode\ModeServer.h" />
     <ClInclude Include="source\mymath.h" />

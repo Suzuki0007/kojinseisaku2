@@ -4,7 +4,7 @@
 
 namespace gravity
 {
-	static constexpr float GRAVITY = 0.98f; // 重力の強さ
+	static constexpr float GRAVITY = 0.98f; // 重力
 }
 
 class JumpComponent final : public Component<CharaBase>
