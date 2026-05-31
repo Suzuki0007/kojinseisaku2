@@ -176,6 +176,7 @@
     </ClInclude>
     <ClInclude Include="source\Manager\timemanager.h" />
     <ClInclude Include="source\math\matrix4.h" />
+    <ClInclude Include="source\math\matrix4convert.h" />
     <ClInclude Include="source\math\vector4.h" />
     <ClInclude Include="source\math\vector4operator.h" />
     <ClInclude Include="source\math\vectorconvert.h" />

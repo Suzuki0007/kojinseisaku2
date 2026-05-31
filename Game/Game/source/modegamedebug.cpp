@@ -68,9 +68,9 @@ bool ModeGame::DebugRender()
 		float linelength = 10.f;
 		if(_camera)
 		{
-			DrawLine3D(VAdd(_camera->_v_target, VGet(-linelength, 0, 0)), VAdd(_camera->_v_target, VGet(linelength, 0, 0)), GetColor(255, 255, 0));
-			DrawLine3D(VAdd(_camera->_v_target, VGet(0, -linelength, 0)), VAdd(_camera->_v_target, VGet(0, linelength, 0)), GetColor(255, 255, 0));
-			DrawLine3D(VAdd(_camera->_v_target, VGet(0, 0, -linelength)), VAdd(_camera->_v_target, VGet(0, 0, linelength)), GetColor(255, 255, 0));
+			VC::DrawLine3D(v::VAdd(_camera->_v_target, v::VGet(-linelength, 0.0f, 0.0f)), v::VAdd(_camera->_v_target, v::VGet(linelength, 0.0f, 0.0f)), GetColor(255, 255, 0));
+			VC::DrawLine3D(v::VAdd(_camera->_v_target, v::VGet(0.0f, -linelength, 0.0f)), v::VAdd(_camera->_v_target, v::VGet(0.0f, linelength, 0.0f)), GetColor(255, 255, 0));
+			VC::DrawLine3D(v::VAdd(_camera->_v_target, v::VGet(0.0f, 0.0f, -linelength)), v::VAdd(_camera->_v_target, v::VGet(0.0f, 0.0f, linelength)), GetColor(255, 255, 0));
 		}
 	}
 
@@ -94,10 +94,10 @@ bool ModeGame::DebugRender()
 			// 敵カプセルを全敵描画（ワイヤー）
 			for(auto& enemy : _enemy)
 			{
-				VECTOR c2_pos = enemy->GetPos();
+				Vec4 c2_pos = enemy->GetPos();
 				float c2_half = enemy->GetColSubY();
-				VECTOR c2_top = VAdd(c2_pos, VGet(0.0f, c2_half, 0.0f));
-				VECTOR c2_bottom = VAdd(c2_pos, VGet(0.0f, -c2_half, 0.0f));
+				Vec4 c2_top = v::VAdd(c2_pos, v::VGet(0.0f, c2_half, 0.0f));
+				Vec4 c2_bottom = v::VAdd(c2_pos, v::VGet(0.0f, -c2_half, 0.0f));
 				float c2_r = (float)enemy->GetCollisionR();
 				DrawCapsule3D(c2_top, c2_bottom, c2_r, 8, GetColor(0, 0, 255), GetColor(255, 255, 255), DX_FILL_WIREFRAME);
 			}

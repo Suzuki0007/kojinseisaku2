@@ -1,11 +1,12 @@
-#pragma once
+﻿#pragma once
 #include "vector4.h"
+#include "matrix4.h"
 
 namespace v
 {
 	// ベクトルの生成
 	template<typename T>
-	inline Vec4 VGet(T x, T y, T z, T w = { 1 })
+	inline Vec4 VGet(T x, T y, T z, T w = 1.0f)
 	{
 		return Vec4(x, y, z, w);
 	}
@@ -38,7 +39,7 @@ namespace v
 
 	// ベクトルの長さ
 	template<typename T>
-	inline T VSize(const Vec4& v)
+	inline float VSize(const Vec4& v)
 	{
 		return v.Length();
 	}
@@ -47,5 +48,10 @@ namespace v
 	inline Vec4 VNorm(const Vec4& v)
 	{
 		return v.Normalized();
+	}
+
+	inline Vec4 VTransform(const Vec4& vec, const Mat4& mat) noexcept
+	{
+		return vec * mat;
 	}
 }

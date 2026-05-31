@@ -35,6 +35,7 @@ public:
 	const VECTOR& SetPos(const VECTOR& pos) { return _pos1 = pos; }
 	auto GetCollisionR() const { return _collision_r; }
 	auto GetCollisionWeight() const { return _collision_weight; }
+	auto GetStatus() const { return _status; }
 
 	bool Damage(float damage);
 
@@ -88,7 +89,7 @@ protected:
 	Vec4 _oldPos; // 1フレーム前のキャラの位置
 	VECTOR _pos1; // キャラの位置
 	VECTOR _old_pos; // 1フレーム前のキャラの位置
-	VECTOR _dir; // キャラの向き
+	Vec4 _dir; // キャラの向き
 	float _col_sub_y; // コリジョン判定用のYオフセット
 	float _collision_r; // 円の半径
 	float _collision_weight; // キャラの重さ

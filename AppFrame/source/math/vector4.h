@@ -24,6 +24,18 @@ public:
 	{
 	}
 
+	union
+	{
+		struct
+		{
+			T x;
+			T y;
+			T z;
+			T w;
+		};
+		std::array<T, 4> data;
+	};
+
 	// 演算子オーバーロード
 	// ベクトル同士の加算
 	NDCE Vector4 operator+(const Vector4& other) const
@@ -81,6 +93,16 @@ public:
 		z -= other.z;
 		w -= other.w;
 		return *this;
+	}
+
+	constexpr T& operator[](size_t index)
+	{
+		return data[index];
+	}
+
+	constexpr const T& operator[](size_t index) const
+	{
+		return data[index];
 	}
 
 	// 比較演算子の自動生成

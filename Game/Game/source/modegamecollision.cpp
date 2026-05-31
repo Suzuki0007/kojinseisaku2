@@ -53,8 +53,15 @@ bool ModeGame::EscapeCollision()
 		MV1_COLL_RESULT_POLY hitPoly;
 
 		// 主人公の腰位置から下方向への直線
-		hitPoly = MV1CollCheck_Line(_map->GetHandleMap(), _map->GetFrameMapCollision(),
-			v::VAdd(player->GetPos(), v::VGet(0, player->GetColSubY(), 0)), v::VAdd(player->GetPos(), v::VGet(0, -99999.f, 0)));
+		hitPoly = VC::MV1CollCheckLine
+		(
+			_map->GetHandleMap(),
+			_map->GetFrameMapCollision(),
+			v::VAdd(player->GetPos(),
+				VC::DxLibToVec(VGet(0, player->GetColSubY(), 0))),
+			v::VAdd(player->GetPos(),
+				VC::DxLibToVec(VGet(0, -99999.f, 0)))
+		);
 		if(hitPoly.HitFlag)
 		{
 			// 当たった
@@ -101,7 +108,7 @@ bool ModeGame::CharaToCharaCollision(CharaBase* c1, CharaBase* c2)
 	float c2_r = (float)c2->GetCollisionR();
 
 	// カプセル同士が当たっていなければ終了
-	if(!HitCheck_Capsule_Capsule(c1_top, c1_bottom, c1_r, c2_top, c2_bottom, c2_r))
+	if(!VC::HitCheckCapsuleToCapsule(c1_top, c1_bottom, c1_r, c2_top, c2_bottom, c2_r))
 	{
 		return false;
 	}
@@ -135,6 +142,8 @@ bool ModeGame::CharaToCharaCollision(CharaBase* c1, CharaBase* c2)
 
 bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 {
+	auto player = GetPlayer();
+
 	if(!chara || !cube)
 	{
 		return false;
@@ -145,7 +154,7 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 		return false;
 	}
 
-	if(!_d_use_collision && chara == _player.get())
+	if(!_d_use_collision && chara == player)
 	{
 		return false;
 	}
@@ -232,11 +241,10 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 	{
 		// プレイヤーが「空中攻撃中」であれば即時に着地フラグを立てない（アニメーションが上書きされるのを防ぐ）
 		bool suppressLand = false;
-		Player* p = dynamic_cast<Player*>(chara);
-		if(p != nullptr)
+		if(player != nullptr)
 		{
 			// プレイヤーが攻撃ステータスかつ現在は空中扱い（GetLand() == false）なら抑止
-			if(p->_status == CharaBase::STATUS::ATTACK && !p->GetLand())
+			if(player->GetStatus() == CharaBase::STATUS::ATTACK && !player->GetLand())
 			{
 				suppressLand = true;
 			}
@@ -250,7 +258,7 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 
 		if(!suppressLand)
 		{
-			_player->SetLand(true);
+			player->SetLand(true);
 		}
 		return true;
 	}
@@ -258,11 +266,12 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 	if(_d_use_collision)
 	{
 		MV1_COLL_RESULT_POLY hitpoly;
-		hitpoly = MV1CollCheck_Line(
+		hitpoly = VC::MV1CollCheckLine(
 			_map->GetHandleMap(),
 			_map->GetFrameMapCollision(),
-			v::VAdd(chara->GetPos(), v::VGet(0, chara->GetColSubY(), 0)),
-			v::VAdd(chara->GetPos(), v::VGet(0, -9999.f, 0))
+			v::VAdd(chara->GetPos(),
+			v::VGet(0.0f, chara->GetColSubY(), 0.0f)),
+			v::VAdd(chara->GetPos(), v::VGet(0.0f, -9999.f, 0.0f))
 		);
 		if(hitpoly.HitFlag)
 		{
@@ -274,20 +283,20 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 				Vec4 tmpPos = chara->GetPos();
 				tmpPos.y = hitpoly.HitPosition.y;
 				chara->SetPos(tmpPos);
-				_player->SetLand(true);
+				player->SetLand(true);
 			}
 			else
 			{
 				if(chara->GetPos().y > ground_y)
 				{
-					_player->SetLand(false);
+					player->SetLand(false);
 				}
 				else
 				{
 					Vec4 tmpPos = chara->GetPos();
 					tmpPos.y = ground_y;
 					chara->SetPos(tmpPos);
-					_player->SetLand(true);
+					player->SetLand(true);
 				}
 			}
 			return true;
@@ -298,11 +307,12 @@ bool ModeGame::CharaToCubeCollision(CharaBase* chara, Cube* cube)
 
 bool ModeGame::LandCheck()
 {
-	if(_player->GetLand())
+	auto player = GetPlayer();
+	if(player->GetLand())
 	{
 		bool is_ground = false;
 
-		VECTOR pos = _player->GetPos();
+		Vec4 pos = player->GetPos();
 
 		// 地面にいるか？
 		if(pos.y <= 0.0f)
@@ -313,11 +323,11 @@ bool ModeGame::LandCheck()
 		// マップにいるか？
 		if(!is_ground)
 		{
-			VECTOR start = VAdd(pos, VGet(0.0f, 0.0f, 0.0f));
-			VECTOR end = VAdd(pos, VGet(0.0f, -50.0f, 0.0f));
+			Vec4 start = v::VAdd(pos, v::VGet(0.0f, 0.0f, 0.0f));
+			Vec4 end = v::VAdd(pos, v::VGet(0.0f, -50.0f, 0.0f));
 
 			MV1_COLL_RESULT_POLY hitpoly;
-			hitpoly = MV1CollCheck_Line(
+			hitpoly = VC::MV1CollCheckLine(
 				_map->GetHandleMap(),
 				_map->GetFrameMapCollision(),
 				start,
@@ -338,7 +348,7 @@ bool ModeGame::LandCheck()
 		// どの足場にも乗っていなければ、空中状態にする
 		if(!is_ground)
 		{
-			_player->SetLand(false);
+			player->SetLand(false);
 		}
 	}
 	return false;
@@ -373,10 +383,13 @@ bool ModeGame::PushChara(CharaBase* move, CharaBase* stop)
 		MV1_COLL_RESULT_POLY hitpoly;
 
 		// 主人公の腰位置から下方向への直線
-		hitpoly = MV1CollCheck_Line(
+		hitpoly = VC::MV1CollCheckLine(
 			_map->GetHandleMap(),
 			_map->GetFrameMapCollision(),
-			v::VAdd(move->GetPos(), v::VGet(0, move->GetColSubY(), 0)), v::VAdd(move->GetPos(), v::VGet(0, -9999.f, 0))
+			v::VAdd(move->GetPos(), 
+			v::VGet(0.0f, move->GetColSubY(), 0.0f)),
+			v::VAdd(move->GetPos(),
+			v::VGet(0.0f, -9999.f, 0.0f))
 		);
 		if(hitpoly.HitFlag)
 		{
@@ -394,8 +407,9 @@ bool ModeGame::PushChara(CharaBase* move, CharaBase* stop)
 // ---------------------------------------------------------
 bool ModeGame::UpdateCheckAttackCollision()
 {
+	auto player = GetPlayer();
 	// 1. プレイヤーの攻撃リストを参照させる（参照を明示的に取得）
-	auto& attack_list = _player->GetAttackCollisionList();
+	auto& attack_list = player->GetAttackCollisionList();
 
 	// デバッグ: 攻撃リストのサイズを表示
 	if(_d_view_collision)
@@ -426,11 +440,11 @@ bool ModeGame::UpdateCheckAttackCollision()
 				int bone_num = attack.capsule.framenum;
 
 				// フレーム(ボーン)のローカル行列を取得
-				MATRIX frame_local = MV1GetFrameLocalMatrix(model_handle, bone_num);
+				Mat4 frame_local = MC::MV1GetFrameLocalMatrix(model_handle, bone_num);
 				// モデルのローカルワールド行列（SetPosition/Rotation 適用後）
-				MATRIX model_world = MV1GetMatrix(model_handle);
+				Mat4 model_world = MC::MV1GetMatrix(model_handle);
 				// フレームのワールド行列 = フレームローカル × モデルワールド
-				MATRIX frame_world = MMult(frame_local, model_world);
+				Mat4 frame_world = MC::MMult(frame_local, model_world);
 
 				// 剣の根元と先端のローカル座標
 				// 注意: モデルによって剣の向き(どの軸が刃方向か)が異なる場合がある
@@ -439,8 +453,8 @@ bool ModeGame::UpdateCheckAttackCollision()
 				Vec4 local_over_pos = v::VGet(50.0f, 50.0f, -100.0f);
 
 				// ワールド座標に変換
-				attack.capsule.underpos = VTransform(local_under_pos, frame_world);
-				attack.capsule.overpos = VTransform(local_over_pos, frame_world);
+				attack.capsule.underpos = v::VTransform(local_under_pos, frame_world);
+				attack.capsule.overpos = v::VTransform(local_over_pos, frame_world);
 			}
 
 			// 敵との当たり判定チェック
@@ -462,7 +476,7 @@ bool ModeGame::UpdateCheckAttackCollision()
 				Vec4 c2_bottom = v::VAdd(c2_pos, v::VGet(0.0f, -c2_half, 0.0f));
 				float c2_r = (float)enemy->GetCollisionR();
 
-				if(HitCheck_Capsule_Capsule(c1_top, c1_bottom, c1_r, c2_top, c2_bottom, c2_r))
+				if(VC::HitCheckCapsuleToCapsule(c1_top, c1_bottom, c1_r, c2_top, c2_bottom, c2_r))
 				{
 					// 当たった
 					attack.isHit = true;

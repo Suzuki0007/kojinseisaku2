@@ -9,9 +9,9 @@ bool CharaBase::Initialize()
 	_attach_index = -1;
 	_total_time = 0.0f;
 	_play_time = 0.0f;
-	_pos1 = VGet(0.0f, 0.0f, 0.0f);
-	_old_pos = VGet(0.0f, 0.0f, 0.0f);
-	_dir = VGet(0.0f, 0.0f, 0.0f);
+	_pos = v::VGet(0.0f, 0.0f, 0.0f);
+	_oldPos = v::VGet(0.0f, 0.0f, 0.0f);
+	_dir = v::VGet(0.0f, 0.0f, 0.0f);
 	_col_sub_y = 0.0f;
 	_collision_r = 0.0f;
 	_collision_weight = 0.0f;

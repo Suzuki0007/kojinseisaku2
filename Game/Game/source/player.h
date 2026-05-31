@@ -11,16 +11,15 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
-	const VECTOR& GetInputVector() const { return _input_v; }
-	float GetMoveSpeed() const { return _mv_speed; }
+
 
 	void SetCamera(Camera* cam)  override { _cam = cam; }
 
 	// 攻撃用カプセル当たり判定
 	bool AttackCapsule
 	(
-		VECTOR underpos,	// カプセルの下位置
-		VECTOR overpos,		// カプセルの上下位置
+		Vec4 underpos,	// カプセルの下位置
+		Vec4 overpos,		// カプセルの上下位置
 		float r,			// 半径
 		int waittime,		// 発生までの時間
 		int activetime,		// 有効時間
@@ -28,38 +27,33 @@ public:
 		bool follow,		// カプセルがキャラに追従するか		
 		float damage,		// ダメージ量
 		int framenum,		// ノックバックフレーム数
-		VECTOR dir
+		Vec4 dir
 	);
 
-	bool PlayerMove(VECTOR v);
+	bool PlayerMove(Vec4 v);
 
 	bool Attack();
 
-	std::vector<mymath::ATTACKCOLLISION>& GetAttackCollisionList() { return _attack_collision; }
+
 
 protected:
 	Camera* _cam;
-	float _mv_speed;
-	VECTOR _input_v;
 	
 	bool _is_dashing;// ダッシュ中かどうか
 	float _dash_speed;
 	float _dash_time;
 	float _dash_timer;
-	VECTOR _dash_direction;
+	Vec4 _dash_direction;
 
 	bool _is_rolling; 
 	float _roll_speed; 
 	float _roll_time; 
 	float _roll_timer;			// ドッジロール残り時間
-	VECTOR _roll_direction;		// ドッジロール方向
+	Vec4 _roll_direction;		// ドッジロール方向
 
 	float _air_control;			// 空中制御係数
 
 	bool _is_attack;			// 攻撃中かどうか
 	bool _air_attack_used;		// 空中攻撃を使用したかどうか
-
-	std::vector<mymath::ATTACKCOLLISION> _attack_collision; // 攻撃用カプセル当たり判定リスト
-
 };
 

@@ -2,10 +2,10 @@
 #include "player.h"
 
 // プレイヤーの移動
-bool Player::PlayerMove(VECTOR v)
+bool Player::PlayerMove(Vec4 v)
 {
-	_pos1.x += v.x;
-	_pos1.z += v.z;
+	_pos.x += v.x;
+	_pos.z += v.z;
 	return true;
 }
 
@@ -21,8 +21,8 @@ bool Player::Initialize()
 	_total_time = 0.0f;
 	_play_time = 0.0f;
 	// 位置、向きの初期化
-	_pos1 = VGet(0.0f, 0.0f, 0.0f); // 初期位置が同じだが、押し出され処理のおかげで位置がずれる
-	_dir = VGet(0.0f, 0.0f, -1.0f);// キャラモデルはデフォルトで-Z方向を向いている
+	_pos = v::VGet(0.0f, 0.0f, 0.0f); // 初期位置が同じだが、押し出され処理のおかげで位置がずれる
+	_dir = v::VGet(0.0f, 0.0f, -1.0f);// キャラモデルはデフォルトで-Z方向を向いている
 	// 腰位置の設定
 	_col_sub_y = 40.0f;
 	// コリジョン半径の設定
@@ -39,14 +39,14 @@ bool Player::Initialize()
 	_dash_speed = 20.0f;
 	_dash_time = 12.0f;
 	_dash_timer = 0.0f;
-	_dash_direction = VGet(0.0f, 0.0f, 0.0f);
+	_dash_direction = v::VGet(0.0f, 0.0f, 0.0f);
 
 	// ドッジロール関連初期化
 	_is_rolling = false;						// ドッジロール中かどうか
 	_roll_speed = 50.0f;						// ドッジロール速度
 	_roll_time = 14.0f;						// ドッジロール継続時間
 	_roll_timer = 0.0f;						// ドッジロール残り時間
-	_roll_direction = VGet(0.0f, 0.0f, 0.0f);	// ドッジロール方向
+	_roll_direction = v::VGet(0.0f, 0.0f, 0.0f);	// ドッジロール方向
 
 	_jumpCount = true;
 	_air_control = 1.0f;
@@ -68,8 +68,8 @@ bool Player::Attack()
 {
 	AttackCapsule
 	(
-		VGet(0.0f, 0.0f, 0.0f),		// カプセルの下位置(剣の根元)
-		VGet(0.0f, 0.0f, 0.0f),		// カプセルの上位置(剣の先端)
+		v::VGet(0.0f, 0.0f, 0.0f),		// カプセルの下位置(剣の根元)
+		v::VGet(0.0f, 0.0f, 0.0f),		// カプセルの上位置(剣の先端)
 		80.0f,						// 半径
 		10,							// 発生までの時間
 		10,							// 有効時間
@@ -84,7 +84,7 @@ bool Player::Attack()
 }
 
 // 攻撃用カプセル当たり判定登録
-bool Player::AttackCapsule(VECTOR underpos, VECTOR overpos, float r, int waittime, int activetime, int timespeed, bool follow, float damage, int framenum, VECTOR dir)
+bool Player::AttackCapsule(Vec4 underpos, Vec4 overpos, float r, int waittime, int activetime, int timespeed, bool follow, float damage, int framenum, Vec4 dir)
 {
 	// 攻撃用カプセル当たり判定情報を追加
 	mymath::ATTACKCOLLISION attackcollision;
@@ -118,7 +118,7 @@ bool Player::Process()
 	input.Update();
 
 	// 処理前の位置を保存
-	_old_pos = _pos1;
+	_oldPos = _pos;
 
 	if(_land)
 	{
@@ -127,7 +127,7 @@ bool Player::Process()
 
 	// 処理前のステータスを保存しておく
 	CharaBase::STATUS old_status = _status;
-	VECTOR v = { 0,0,0 };
+	Vec4 v = v::VGet(0,0,0);
 	float length = 0.0f;
 
 	float sx = _cam->_v_pos.x - _cam->_v_target.x;
@@ -158,7 +158,7 @@ bool Player::Process()
 
 		_input_v = v;
 
-		if(VSize(v) > 0.0f)
+		if(v::VSize(v) > 0.0f)
 		{
 			length = _mv_speed;
 		}
@@ -175,7 +175,7 @@ bool Player::Process()
 			// ジャンプ
 			_jumpCount = false;
 			_gravity = _jumpHeight;
-			_pos1.y += _gravity;
+			_pos.y += _gravity;
 			_status = STATUS::JUMP;
 			_land = false;
 		}
@@ -188,14 +188,14 @@ bool Player::Process()
 				_dash_timer = _dash_time;
 				_status = STATUS::DASHING;
 				// ダッシュ方向は現在の入力方向
-				if(VSize(v) > 0.0f)
+				if(v::VSize(v) > 0.0f)
 				{
 					_dash_direction = v;
 					_dash_direction.y = 0.0f;
 
-					if(VSize(_dash_direction) > 0.0f)
+					if(v::VSize(_dash_direction) > 0.0f)
 					{
-						_dash_direction = VNorm(_dash_direction);
+						_dash_direction = v::VNorm(_dash_direction);
 					}
 				}
 				else
@@ -203,13 +203,13 @@ bool Player::Process()
 					_dash_direction = _dir;
 					_dash_direction.y = 0.0f;
 
-					if(VSize(_dash_direction) > 0.0f)
+					if(v::VSize(_dash_direction) > 0.0f)
 					{
-						_dash_direction = VNorm(_dash_direction);
+						_dash_direction = v::VNorm(_dash_direction);
 					}
 					else
 					{
-						_dash_direction = VGet(0.0f, 0.0f, -1.0f);
+						_dash_direction = v::VGet(0.0f, 0.0f, -1.0f);
 					}
 				}
 			}
@@ -224,8 +224,8 @@ bool Player::Process()
 		_roll_timer = _roll_time;
 		_status = STATUS::ROLLING;
 		// ドッジロール方向は現在の入力方向
-		VECTOR dir = { 0,0,0 };
-		if(VSize(v) > 0.0f)
+		Vec4 dir = v::VGet(0,0,0);
+		if(v::VSize(v) > 0.0f)
 		{
 			dir = v;
 		}
@@ -233,16 +233,16 @@ bool Player::Process()
 		{
 			dir = _dir;
 			dir.y = 0.0f;
-			if(VSize(dir) <= 0.0f)
+			if(v::VSize(dir) <= 0.0f)
 			{
-				dir = VGet(0.0f, 0.0f, -1.0f);
+				dir = v::VGet(0.0f, 0.0f, -1.0f);
 			}
 		}
 
 		// 正規化
-		if(VSize(dir) > 0.0f)
+		if(v::VSize(dir) > 0.0f)
 		{
-			dir = VNorm(dir);
+			dir = v::VNorm(dir);
 		}
 
 		_roll_direction = dir;

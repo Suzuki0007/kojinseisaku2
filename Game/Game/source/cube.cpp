@@ -166,8 +166,8 @@ bool Cube::Process()
 
 		Vec4 base = face_vertices[j];
 
-		vertex.pos = v::VAdd(base,_cube_pos);
-		vertex.norm = _cube_normal_list[face];
+		vertex.pos = VC::VecToDxLib(v::VAdd(base,_cube_pos));
+		vertex.norm = VC::VecToDxLib(_cube_normal_list[face]);
 		vertex.dif = _diffuse;
 		vertex.spc = _specular;
 		vertex.u = _u_list[j];

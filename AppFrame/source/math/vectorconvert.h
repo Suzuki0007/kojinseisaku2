@@ -49,4 +49,9 @@ namespace VC
 	{
 		return ::DrawTriangle3D(VecToDxLib(v1), VecToDxLib(v2), VecToDxLib(v3), color, fill);
 	}
+
+	inline int DrawCapsule3D(Vec4 top, Vec4 bottom, float radius, int division, unsigned int edgeColor, unsigned int capColor, int fillFlag)
+	{
+		return ::DrawCapsule3D(VecToDxLib(top), VecToDxLib(bottom), radius, division, edgeColor, capColor, fillFlag);
+	}
 }
