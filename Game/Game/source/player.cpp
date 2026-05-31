@@ -285,20 +285,20 @@ bool Player::Process()
 			{
 				attack_move_speed = 8.0f;
 			}
-			VECTOR forward_dir = VNorm(_dir);
-			_pos1.x += forward_dir.x * attack_move_speed;
-			_pos1.z += forward_dir.z * attack_move_speed;
+			Vec4 forward_dir = v::VNorm(_dir);
+			_pos.x += forward_dir.x * attack_move_speed;
+			_pos.z += forward_dir.z * attack_move_speed;
 		}
 
 		// 空中で攻撃している場合は重力を適用
 		if(!_land)
 		{
 			_gravity -= 0.5f;
-			_pos1.y += _gravity;
+			_pos.y += _gravity;
 
-			if(_pos1.y <= 0.0f)
+			if(_pos.y <= 0.0f)
 			{
-				_pos1.y = 0.0f;
+				_pos.y = 0.0f;
 				_land = true;
 				_gravity = 0.0f;
 				_jumpCount = true;
@@ -310,14 +310,14 @@ bool Player::Process()
 	{
 		// 重力処理
 		_gravity -= 0.98f;
-		_pos1.y += _gravity;
+		_pos.y += _gravity;
 		if(_gravity < 0.0f)
 		{
 			_status = STATUS::FALL;
 		}
-		if(_pos1.y <= 0.0f)
+		if(_pos.y <= 0.0f)
 		{
-			_pos1.y = 0.0f;
+			_pos.y = 0.0f;
 			_land = true;
 			_gravity = 0.0f;
 			_jumpCount = true;
@@ -331,8 +331,8 @@ bool Player::Process()
 		{
 			if(_dash_timer > 0.0f)
 			{
-				_pos1.x += _dash_direction.x * _dash_speed;
-				_pos1.z += _dash_direction.z * _dash_speed;
+				_pos.x += _dash_direction.x * _dash_speed;
+				_pos.z += _dash_direction.z * _dash_speed;
 				_dash_timer -= 1.0f;
 			}
 			else
@@ -346,8 +346,8 @@ bool Player::Process()
 			// 空中通常移動（v はワールド移動量）
 			if(VSize(v) > 0.0f)
 			{
-				_pos1.x += v.x * _air_control;
-				_pos1.z += v.z * _air_control;
+				_pos.x += v.x * _air_control;
+				_pos.z += v.z * _air_control;
 				// 軸ロック中は向きを固定
                 _dir = v;
 			}
@@ -361,8 +361,8 @@ bool Player::Process()
 			{
 				float ratio = _roll_timer / _roll_time;
 				float speed = _roll_speed * (ratio * ratio);
-				_pos1.x += _roll_direction.x * speed;
-				_pos1.z += _roll_direction.z * speed;
+				_pos.x += _roll_direction.x * speed;
+				_pos.z += _roll_direction.z * speed;
 				_dir = _roll_direction;
 				_roll_timer -= 1.0f;
 				_status = STATUS::ROLLING;
@@ -376,7 +376,7 @@ bool Player::Process()
 		else
 		{
 			// 地上移動（v はワールド移動量）
-			if(VSize(v) > 0.0f && _status != STATUS::ATTACK)
+			if(v::VSize(v) > 0.0f && _status != STATUS::ATTACK)
 			{
                 _dir = v;
 
@@ -520,7 +520,7 @@ bool Player::Render()
     }
 
     // 位置
-    MV1SetPosition(_handle, _pos1);
+    MV1SetPosition(_handle, _pos);
     // 向きからY軸回転を算出
     VECTOR vrot = { 0,0,0, };
     vrot.y = atan2(_dir.x * -1, _dir.z * -1);// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
