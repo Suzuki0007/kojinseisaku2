@@ -127,7 +127,7 @@ bool Player::Process()
 
 	// 処理前のステータスを保存しておく
 	CharaBase::STATUS old_status = _status;
-	Vec4 v = v::VGet(0,0,0);
+	Vec4 v = v::VGet(0.0f, 0.0f, 0.0f);
 	float length = 0.0f;
 
 	float sx = _cam->_v_pos.x - _cam->_v_target.x;
@@ -224,7 +224,7 @@ bool Player::Process()
 		_roll_timer = _roll_time;
 		_status = STATUS::ROLLING;
 		// ドッジロール方向は現在の入力方向
-		Vec4 dir = v::VGet(0,0,0);
+		Vec4 dir = v::VGet(0.0f, 0.0f, 0.0f);
 		if(v::VSize(v) > 0.0f)
 		{
 			dir = v;
@@ -344,7 +344,7 @@ bool Player::Process()
 		else
 		{
 			// 空中通常移動（v はワールド移動量）
-			if(VSize(v) > 0.0f)
+			if(v::VSize(v) > 0.0f)
 			{
 				_pos.x += v.x * _air_control;
 				_pos.z += v.z * _air_control;
@@ -520,11 +520,11 @@ bool Player::Render()
     }
 
     // 位置
-    MV1SetPosition(_handle, _pos);
+    VC::MV1SetPosition(_handle, _pos);
     // 向きからY軸回転を算出
-    VECTOR vrot = { 0,0,0, };
+    Vec4 vrot = { 0.0f, 0.0f, 0.0f };
     vrot.y = atan2(_dir.x * -1, _dir.z * -1);// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
-    MV1SetRotationXYZ(_handle, vrot);
+    VC::MV1SetRotationXYZ(_handle, vrot);
     // 描画
     MV1DrawModel(_handle);
 

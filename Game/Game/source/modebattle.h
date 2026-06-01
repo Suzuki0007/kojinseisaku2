@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "appframe.h"
 #include "camera.h"
 #include <memory>

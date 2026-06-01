@@ -38,7 +38,6 @@ namespace v
 	}
 
 	// ベクトルの長さ
-	template<typename T>
 	inline float VSize(const Vec4& v)
 	{
 		return v.Length();

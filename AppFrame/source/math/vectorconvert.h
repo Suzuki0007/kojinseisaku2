@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "vector4operator.h"
 #include "Dxlib.h"
 
@@ -13,6 +13,16 @@ namespace VC
 	inline Vec4 DxLibToVec(VECTOR v1)
 	{
 		return Vec4(v1.x, v1.y, v1.z, 0.0f);
+	}
+
+	inline int MV1SetPosition(int handle, Vec4 pos)
+	{
+		return MV1SetPosition(handle, VecToDxLib(pos));
+	}
+
+	inline int MV1SetRotationXYZ(int handle, Vec4 rot)
+	{
+		return MV1SetRotationXYZ(handle, VecToDxLib(rot));
 	}
 
 	inline MV1_COLL_RESULT_POLY MV1CollCheckLine(int handle, int frame, Vec4 v1, Vec4 v2)

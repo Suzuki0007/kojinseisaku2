@@ -84,12 +84,12 @@ bool ModeGame::DebugRender()
 			// 有効レンジのみ描画
 			if(attack.waittime > 0 || attack.activetime <= 0) continue;
 
-			VECTOR c1_top = attack.capsule.overpos;
-			VECTOR c1_bottom = attack.capsule.underpos;
+			Vec4 c1_top = attack.capsule.overpos;
+			Vec4 c1_bottom = attack.capsule.underpos;
 			float c1_r = attack.capsule.r;
 
 			// 攻撃カプセル: ワイヤー
-			DrawCapsule3D(c1_top, c1_bottom, c1_r, 8, GetColor(255, 0, 0), GetColor(255, 255, 255), DX_FILL_WIREFRAME);
+			VC::DrawCapsule3D(c1_top, c1_bottom, c1_r, 8, GetColor(255, 0, 0), GetColor(255, 255, 255), DX_FILL_WIREFRAME);
 
 			// 敵カプセルを全敵描画（ワイヤー）
 			for(auto& enemy : _enemy)
@@ -99,13 +99,13 @@ bool ModeGame::DebugRender()
 				Vec4 c2_top = v::VAdd(c2_pos, v::VGet(0.0f, c2_half, 0.0f));
 				Vec4 c2_bottom = v::VAdd(c2_pos, v::VGet(0.0f, -c2_half, 0.0f));
 				float c2_r = (float)enemy->GetCollisionR();
-				DrawCapsule3D(c2_top, c2_bottom, c2_r, 8, GetColor(0, 0, 255), GetColor(255, 255, 255), DX_FILL_WIREFRAME);
+				VC::DrawCapsule3D(c2_top, c2_bottom, c2_r, 8, GetColor(0, 0, 255), GetColor(255, 255, 255), DX_FILL_WIREFRAME);
 			}
 
 			// ヒット時の強調（塗りつぶし）
 			if(attack.isHit)
 			{
-				DrawCapsule3D(c1_top, c1_bottom, c1_r, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), DX_FILL_SOLID);
+				VC::DrawCapsule3D(c1_top, c1_bottom, c1_r, 8, GetColor(255, 255, 0), GetColor(255, 255, 255), DX_FILL_SOLID);
 			}
 		}
 	}
