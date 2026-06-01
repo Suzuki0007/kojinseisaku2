@@ -92,7 +92,8 @@ bool ModeGame::DebugRender()
 			VC::DrawCapsule3D(c1_top, c1_bottom, c1_r, 8, GetColor(255, 0, 0), GetColor(255, 255, 255), DX_FILL_WIREFRAME);
 
 			// 敵カプセルを全敵描画（ワイヤー）
-			for(auto& enemy : _enemy)
+			auto& enemies = GetEnemies();
+			for(auto& enemy : enemies)
 			{
 				Vec4 c2_pos = enemy->GetPos();
 				float c2_half = enemy->GetColSubY();

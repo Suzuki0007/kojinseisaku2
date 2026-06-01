@@ -19,7 +19,7 @@ public:
 	T w{ 0 };
 
 	constexpr Vector4() = default;
-	constexpr Vector4(T x, T y, T z, T w = {1})
+	constexpr Vector4(T x, T y, T z, T w = {1.0f})
 		: x(x), y(y), z(z), w(w)
 	{
 	}

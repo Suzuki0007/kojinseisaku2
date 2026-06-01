@@ -15,16 +15,28 @@ public:
 
 	void Create(const std::string& type)
 	{
-		_object = _factory.Create(type);
+		auto object = _factory.Create(type);
+		if(object != nullptr)
+		{
+			_object.emplace_back(std::move(object));
+		}
 	}
 
-	T* Get() const { return _object.get(); }
-	std::unique_ptr<T>& GetOwner() { return _object; }
+	T* Get(size_t index = 0) const
+	{
+		if(index >= _object.size())
+		{
+			return nullptr;
+		}
+		return _object[index].get(); 
+	}
+	std::vector<std::unique_ptr<T>>& GetAll() { return _object; }
+	std::unique_ptr<T>& GetOwner() { return _object.front(); }
 
 protected:
 	ObjectManagerBase() = default;
 	virtual ~ObjectManagerBase() = default;
 	Factory _factory;// オブジェクトのファクトリー
-	std::unique_ptr<T> _object;// 管理するオブジェクト
+	std::vector<std::unique_ptr<T>> _object;// 管理するオブジェクト
 };
 

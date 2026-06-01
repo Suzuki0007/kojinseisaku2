@@ -31,8 +31,6 @@ public:
 	const Vec4& GetOldPos() const { return _oldPos; }
 	const Vec4& SetPos(const Vec4& pos) { return _pos = pos; }
 	auto GetColSubY() const { return _col_sub_y; }
-
-	const VECTOR& SetPos(const VECTOR& pos) { return _pos1 = pos; }
 	auto GetCollisionR() const { return _collision_r; }
 	auto GetCollisionWeight() const { return _collision_weight; }
 	auto GetStatus() const { return _status; }
@@ -87,8 +85,6 @@ protected:
 	float _play_time;
 	Vec4 _pos; // キャラの位置
 	Vec4 _oldPos; // 1フレーム前のキャラの位置
-	VECTOR _pos1; // キャラの位置
-	VECTOR _old_pos; // 1フレーム前のキャラの位置
 	Vec4 _dir; // キャラの向き
 	float _col_sub_y; // コリジョン判定用のYオフセット
 	float _collision_r; // 円の半径

@@ -13,6 +13,8 @@ enum class InputButton
 	CommandLeft,
 	CommandRight,
 
+	SceneDebug,
+
 	Max
 };
 

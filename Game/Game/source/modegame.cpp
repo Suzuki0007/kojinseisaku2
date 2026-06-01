@@ -3,6 +3,7 @@
 #include "applicationmain.h"
 #include "modeeffekseer.h"
 #include "modetitle.h"
+#include "scenefactory.h"
 
 // 初期化
 bool ModeGame::Initialize()
@@ -60,9 +61,10 @@ bool ModeGame::Initialize()
 		v::VGet(6000.0f, 100.0f, 1500.0f)
 	};
 
-	for(size_t i = 0; i < _enemy.size() && i < enemy_positions.size(); ++i)
+	auto& enemy = GetEnemies();
+	for(size_t i = 0; i < enemy_positions.size(); ++i)
 	{
-		_enemy[i]->SetPos(enemy_positions[i]);
+		enemy[i]->SetPos(enemy_positions[i]);
 	}
 
 	DebugInitialize();// デバック初期化
@@ -75,13 +77,14 @@ bool ModeGame::Initialize()
 	// 終了時の残り時間を未設定にする
 	_final_remaining_time = -1;
 	// _enemy_count を初期の総数として保持（倒した数は動的に計算する）
-	_enemy_count = static_cast<int>(_enemy.size());
+	auto& enemies = EnemyManager::GetInstance()->GetEnemies();
+	_enemy_count = static_cast<int>(enemies.size());
 
 	_enemy_alive_list.clear();
 	_enemy_alive_list.resize(_enemy_count, false);
-	for(size_t i = 0; i < _enemy.size(); ++i)
+	for(size_t i = 0; i < enemies.size(); ++i)
 	{
-		_enemy_alive_list[i] = _enemy[i]->IsAlive();
+		_enemy_alive_list[i] = enemies[i]->IsAlive();
 	}
 
 	InputDevice& input = InputLocator::Get();
@@ -112,6 +115,16 @@ bool ModeGame::Terminate()
 PlayerBase* ModeGame::GetPlayer() const
 {
 	return PlayerManager::GetInstance()->GetPlayer().get();
+}
+
+const std::vector<std::unique_ptr<EnemyBase>>& ModeGame::GetEnemies() const
+{
+	return EnemyManager::GetInstance()->GetEnemies();
+}
+
+void ModeGame::OnChangeState(GameState state, int enemyId)
+{
+	ChangeState(state, enemyId);
 }
 
 // 円同士の当たり判定
@@ -149,135 +162,135 @@ bool ModeGame::PlayerCameraInfo()
 	return true;
 }
 
+void ModeGame::ChangeState(GameState nextState, int enemyId)
+{
+	if(_gameState == GameState::Battle && nextState == GameState::World)
+	{
+		// バトル終了時の処理
+		if(_enemyIndexBattle >= 0 && _enemyIndexBattle < _enemy_alive_list.size())
+		{
+			_enemy_alive_list[_enemyIndexBattle] = false;
+			_enemy_count--;
+		}
+		_enemyIndexBattle = -1;
+	}
+	
+	_sceneBase = SceneFactory::CreateScene(nextState, enemyId);
+
+	if(_sceneBase)
+	{
+		_sceneBase->RegisterObserver(this);
+		_sceneBase->Initialize();
+	}
+
+	_gameState = nextState;
+}
+
 // 計算処理
 bool ModeGame::Process()
 {
-	base::Process();
-
-	auto* player = GetPlayer();
-
-	DebugProcess();// デバック処理
-
-	// ゲームオーバー時の入力処理（タイトルへ戻る）
+	// ---------------------------------------------------------
+	// A. 【最優先】ゲームオーバー処理（タイトルへ戻る）
+	// ---------------------------------------------------------
 	int trg = ApplicationMain::GetInstance()->GetTrg();
 	if(_is_gameover)
 	{
-		// ゲームオーバー中は下のレイヤー処理を止める
 		ModeServer::GetInstance()->SkipRenderUnderLayer();
 
-		// 決定ボタンでタイトルを呼び出す
 		if(trg & PAD_INPUT_1)
 		{
-			// タイトルモードを追加して、このモードを削除
 			ModeServer::GetInstance()->Add(new ModeTitle(), 0, "title");
 			ModeServer::GetInstance()->Del(this);
 		}
-
-		// ゲームオーバー中はゲーム処理を行わない
-		return true;
+		return true; // ゲームオーバー中はこれ以降の処理を一切やらない
 	}
 
-	// キャラ処理（生存しているもののみ）
-	for(auto& chara : _chara)
+	// ---------------------------------------------------------
+	// B. ★【World（移動中）のみ】動かす処理の部屋
+	// ---------------------------------------------------------
+	if(_gameState == GameState::World)
 	{
-		if(chara->IsAlive())
+		// 1. 敵の行動更新（ModeGame側の生存リストを正義にする！）
+		auto& enemies = GetEnemies();
+		for(size_t i = 0; i < enemies.size(); i++)
 		{
-			chara->Process();
-		}
-	}
-
-	// オブジェクト処理
-	for(auto& object : _object)
-	{
-		object->Process();
-	}
-
-	// 敵との当たり判定処理（生存している敵のみ） & 死亡カウント検出
-	for(size_t i = 0; i < _enemy.size(); i++)
-	{
-		auto& enemy = _enemy[i];
-
-		if(enemy->IsAlive())
-		{
-			CharaToCharaCollision(player, enemy.get());
-			// 敵とキューブの当たり判定
-			for(auto& cube : _cube)
+			if(_enemy_alive_list[i]) // 生きている敵だけ
 			{
-				CharaToCubeCollision(enemy.get(), cube.get());
+				enemies[i]->Process();
 			}
 		}
 
-		// 死亡検出（前フレームは生存で今フレーム死んでいる => 倒した）
-		bool prev_alive = false;
-		if(i < _enemy_alive_list.size())
+		// 2. プレイヤーとその他オブジェクトの行動更新
+		auto* player = GetPlayer();
+		if(player && player->IsAlive())
 		{
-			prev_alive = _enemy_alive_list[i];
+			player->Process();
 		}
-		bool now_alive = enemy->IsAlive();
-		// 状態を保存
-		if(i < _enemy_alive_list.size())
+		for(auto& object : _object)
 		{
-			_enemy_alive_list[i] = now_alive;
+			object->Process();
+		}
+
+		// 3. 敵の物理判定 ＆ 新・エンカウントチェック
+		// 💥敵とぶつかったら、この内部で ChangeSubState(Battle) が走ります
+		CheckEncount();
+
+		// 4. プレイヤーとステージ（壁キューブ）の判定
+		_resolve_on_y = false;
+		_landed_on_up = false;
+		for(auto& cube : _cube)
+		{
+			CharaToCubeCollision(player, cube.get());
+		}
+		LandCheck();
+
+		// 5. 移動中専用のアクション・カメラ情報更新
+		UpdateCheckAttackCollision();
+		PlayerCameraInfo();
+
+		// 6. フィールド上の敵が全滅したかのチェック
+		int alive_count = 0;
+		for(auto& enemy : enemies)
+		{
+			if(enemy->IsAlive()) ++alive_count; // ※念のため元の判定も残しつつ、alive_listベースにするなら _enemy_alive_list[i] でも可
+		}
+		if(alive_count == 0)
+		{
+			_is_gameover = true;
+			ModeServer::GetInstance()->SkipProcessUnderLayer();
+
+			int elapsed_sec = static_cast<int>(GetModeTm() / 1000);
+			int remaining = _time_limit - elapsed_sec;
+			if(remaining < 0) remaining = 0;
+			if(_final_remaining_time < 0) _final_remaining_time = remaining;
 		}
 	}
 
-	// 当たり判定の処理をここに書く
-	EscapeCollision();
-
-	_resolve_on_y = false;
-	_landed_on_up = false;
-	// プレイヤーとキューブの当たり判定
-	for(auto& cube : _cube)
+	// ---------------------------------------------------------
+	// C. 【共通】現在のサブシーン（WorldScene / BattleScene）の更新
+	// ---------------------------------------------------------
+	if(_sceneBase)
 	{
-		CharaToCubeCollision(player, cube.get());
+		_sceneBase->Update(); // Worldの外にあるのでBattle中もちゃんと動く！
 	}
 
-	LandCheck();
+	// ---------------------------------------------------------
+	// D. 【共通】カメラや制限時間などの環境更新
+	// ---------------------------------------------------------
+	if(_camera)
+	{
+		_camera->Process(); // 👈 これが外にあるのでバトル中も画面がフリーズしない
+	}
 
-	// 攻撃判定の更新処理
-	UpdateCheckAttackCollision();
-
-
-	// プレイヤーのカメラ情報表示
-	PlayerCameraInfo();
-
-	// カメラ操作はプレイヤー処理の後に行い、ジャンプなどの高さ変化を追従させる
-	_camera->Process();
-
-	// 制限時間チェック（GetModeTm() はミリ秒）
+	// 制限時間のカウントダウン
 	unsigned long elapsed_ms = GetModeTm();
 	int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
 	int remaining = _time_limit - elapsed_sec;
 	if(remaining <= 0)
 	{
 		_is_gameover = true;
-		// ゲームオーバーになった瞬間、下のレイヤー処理を止める（選択的）
 		ModeServer::GetInstance()->SkipProcessUnderLayer();
-		// 残り時間を0で確定
-		if(_final_remaining_time < 0)
-		{
-			_final_remaining_time = 0;
-		}
-	}
-
-	// 敵が全て倒されたかチェック（残り敵数が0）
-	int alive_count = 0;
-	for(auto& enemy : _enemy)
-	{
-		if(enemy->IsAlive()) ++alive_count;
-	}
-	if(alive_count == 0)
-	{
-		_is_gameover = true;
-		// 全滅でゲームオーバーになった瞬間、下のレイヤー処理を止める
-		ModeServer::GetInstance()->SkipProcessUnderLayer();
-		// 全滅時の残り時間を確定（負になる場合は0で）
-		int final_rem = remaining;
-		if(final_rem < 0) final_rem = 0;
-		if(_final_remaining_time < 0)
-		{
-			_final_remaining_time = final_rem;
-		}
+		if(_final_remaining_time < 0) _final_remaining_time = 0;
 	}
 
 	return true;
@@ -294,12 +307,42 @@ bool ModeGame::Render()
 	SetCameraNearFar(_camera->_clip_near, _camera->_clip_far);
 
 	// キャラを描画（生存しているもののみ）
+	auto& enemies = GetEnemies();
 	for(auto& chara : _chara)
 	{
-		if(chara->IsAlive())
+		// 1. まず、このキャラが「敵（Enemy）」のリストに含まれているか探す
+		int enemyIndex = -1;
+		for(size_t i = 0; i < enemies.size(); i++)
 		{
-			chara->Render();
+			if(chara == enemies[i].get()) // ポインタの住所が一致するかチェック
+			{
+				enemyIndex = i; // 一致したら、その敵のインデックス（番号）を保存
+				break;
+			}
 		}
+
+		// 2. 【運命の分岐】
+		if(enemyIndex != -1)
+		{
+			// このキャラは「敵」だった！
+			// ModeGameの生存メモを見て、すでに倒されているなら描画をスキップする
+			if(!_enemy_alive_list[enemyIndex])
+			{
+				continue; //  ここで弾くことで、画面に映らなくなります！
+			}
+		}
+		else
+		{
+			// このキャラは「プレイヤー」や「NPC」だった！
+			// 敵ではないので、個別の死亡チェック（chara->IsAlive()等）だけでOK
+			if(!chara->IsAlive())
+			{
+				continue;
+			}
+		}
+
+		// 3. 生き残ったキャラだけがここでめでたく描画される
+		chara->Render(); // (または Draw() )
 	}
 
 	// オブジェクトを描画
@@ -308,6 +351,8 @@ bool ModeGame::Render()
 		object->Render();
 	}
 
+	_sceneBase->Render(); // ワールド中ならWorldScene、バトル中ならBattleSceneが描画される
+
 	DebugRender();// デバック描画処理
 
     // 敵のHP情報を画面に表示（生存している敵のみ）と生存カウント取得
@@ -315,18 +360,19 @@ bool ModeGame::Render()
     SetFontSize(16);
     int y_offset = 10; // 画面上部からのオフセット
     int alive_count = 0; // 生存している敵のカウント用
-    for(int i = 0; i < _enemy.size(); i++)
+    for(int i = 0; i < enemies.size(); i++)
     {
-        auto& enemy = _enemy[i];
-        if(enemy->IsAlive())
-        {
-            DrawFormatString(10, y_offset + (alive_count * 20), GetColor(255, 0, 0),
-                "Enemy[%d] HP: %1f",
-                i,
-                enemy->GetHP()
-                ); // 最大HPが分からないので現在HPを表示
-            alive_count++;
-        }
+		auto& enemy = enemies[i];
+
+		if(_enemy_alive_list[i])
+		{
+			DrawFormatString(10, y_offset + (alive_count * 20), GetColor(255, 0, 0),
+				"Enemy[%d] HP: %1f",
+				i,
+				enemy->GetHP()
+			);
+			alive_count++;
+		}
     }
 
 	 SetFontSize(64);

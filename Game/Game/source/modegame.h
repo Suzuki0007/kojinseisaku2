@@ -12,14 +12,25 @@
 #include "map.h"
 #include "cube.h"
 #include "PlayerManager.h"
+#include "enemymanager.h"
+#include "scenebase.h"
+#include "gameobserver.h"
 
 #define CUBE_COUNT 6
 #define ENEMY_COUNT 6
 
-class ModeGame : public ModeBase
+class ModeGame : public ModeBase, public GameObserver
 {
 	typedef ModeBase base;
 public:
+
+
+	enum class GameResult
+	{
+		Continue, // 今のシーンをそのまま続ける
+		BattleEnd, // バトル終了
+	};
+
 	virtual bool Initialize();
 	virtual bool Terminate();
 	virtual bool Process();
@@ -49,6 +60,7 @@ public:
 	bool CharaToCubeCollision(CharaBase* chara, Cube* cube);// キャラとキューブの当たり判定処理
 	bool LandCheck();// 着地判定処理
 	bool UpdateCheckAttackCollision();// 攻撃用当たり判定の更新処理
+	bool CheckEncount();// エンカウントの判定処理
 
 	// デバック関数
 	bool DebugInitialize();
@@ -61,22 +73,27 @@ public:
 	// オブジェクト関数
 	bool ObjectInitialize();
 
+	virtual void OnChangeState(GameState state, int enemyId) override;
+
+	void ChangeState(GameState nextState, int enemyId);
+
 private:
 	// プレイヤーのヘルパー関数
 	PlayerBase* GetPlayer() const;
+	const std::vector<std::unique_ptr<EnemyBase>>& GetEnemies() const;
+
 
 protected:
 	Camera* _camera;
 
 	// キャラクタ管理
-	std::vector<std::shared_ptr<CharaBase>> _chara;
+		// キャラクタ管理
+	std::vector<CharaBase*> _chara;
 	std::vector<std::shared_ptr<ObjectBase>> _object;
 	// マップ
 	std::shared_ptr<Map> _map;
 	// キューブ
 	std::vector<std::shared_ptr<Cube>> _cube;
-	// 敵
-	std::vector<std::shared_ptr<Enemy>> _enemy;
 	// デバッグ用
 	bool _d_view_collision;
 	bool _d_use_collision;
@@ -92,5 +109,9 @@ protected:
 	std::vector<bool> _enemy_alive_list;// 敵の生存フラグリスト
 	// 全滅または時間切れになったときの残り時間を保持。未設定は -1
 	int _final_remaining_time;
+
+	std::unique_ptr<SceneBase> _sceneBase;
+	GameState _gameState{ GameState::World };
+	int _enemyIndexBattle{ -1 };// 現在戦っている敵の配列番号
 };
 

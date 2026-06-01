@@ -27,12 +27,20 @@ bool ModeGame::ObjectInitialize()
 	_chara.emplace_back(pm->GetPlayer().get());
 
 	// 敵初期化
+	auto* em = EnemyManager::GetInstance();
+	em->RegisterType();
+
 	for(int i = 0; i < ENEMY_COUNT; ++i)
 	{
-		auto enemy = std::make_shared<Enemy>();
-		_enemy.emplace_back(enemy);
-		_chara.emplace_back(enemy);
+		em->CreateEnemy("Enemy");
 	}
+
+	for(auto& enemy : em->GetEnemies())
+	{
+		_chara.emplace_back(enemy.get());
+	}
+
+	ChangeState(GameState::World, -1);
 
 	return true;
 }

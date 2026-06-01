@@ -115,11 +115,11 @@ bool Enemy::Render()
     }
 
 	// 位置
-	MV1SetPosition(_handle, _pos1);
+	VC::MV1SetPosition(_handle, _pos);
 	// 向きからY軸回転を算出
-	VECTOR vrot = { 0,0,0, };
+	Vec4 vrot = { 0.0f, 0.0f, 0.0f, 0.0f };
 	vrot.y = atan2f(-_dir.x, -_dir.z);
-	MV1SetRotationXYZ(_handle, vrot);
+	VC::MV1SetRotationXYZ(_handle, vrot);
 
 	// 描画
 	MV1DrawModel(_handle);

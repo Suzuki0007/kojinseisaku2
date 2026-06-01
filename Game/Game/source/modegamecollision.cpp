@@ -354,6 +354,36 @@ bool ModeGame::LandCheck()
 	return false;
 }
 
+bool ModeGame::CheckEncount()
+{
+	auto* player = GetPlayer();
+	auto& enemies = GetEnemies();
+
+	for(int i = 0; i < enemies.size(); i++)
+	{
+		// 1. 【超重要】既に倒された敵（生存リストがfalse）なら、物理も判定もすべてスルー！
+		if(!_enemy_alive_list[i])
+		{
+			continue;
+		}
+
+		auto& enemy = enemies[i];
+
+		// 3. 【あなたの動くコード！】円同士の当たり判定チェック
+		if(IsHitCircle(player, enemy.get()))
+		{
+			// 戦う敵の番号（出席番号）をメモ
+			_enemyIndexBattle = i;
+
+			// 工場を動かしてバトルシーンへ遷移！
+			ChangeState(GameState::Battle, i);
+
+			return true; // 1体と当たったら処理を抜ける
+		}
+	}
+	return false;
+}
+
 // キャラ同士の押し出し処理
 bool ModeGame::PushChara(CharaBase* move, CharaBase* stop)
 {
@@ -458,7 +488,8 @@ bool ModeGame::UpdateCheckAttackCollision()
 			}
 
 			// 敵との当たり判定チェック
-			for(auto& enemy : _enemy)
+			auto& enemies = GetEnemies();
+			for(auto& enemy : enemies)
 			{
 				if(attack.isHit)
 				{
