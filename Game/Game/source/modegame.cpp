@@ -5,12 +5,80 @@
 #include "modetitle.h"
 #include "scenefactory.h"
 
+#include "lua.hpp"
+
+#include "tolua.h"
+#include "tolua_cmd/luaglue_cmd.h"
+#include "lua_cmd.h"
+
+// luaの標準ライブラリテーブル
+static const luaL_Reg loadedlibs[] =
+{
+	{ "_G", luaopen_base },
+	{ LUA_LOADLIBNAME, luaopen_package },
+	{ LUA_COLIBNAME, luaopen_coroutine },
+	{ LUA_TABLIBNAME, luaopen_table },
+	{ LUA_IOLIBNAME, luaopen_io },
+	//  {LUA_OSLIBNAME, luaopen_os},
+	{ LUA_STRLIBNAME, luaopen_string },
+	{ LUA_MATHLIBNAME, luaopen_math },
+	{ LUA_UTF8LIBNAME, luaopen_utf8 },
+	{ LUA_DBLIBNAME, luaopen_debug },
+#if defined(LUA_COMPAT_BITLIB)
+	{ LUA_BITLIBNAME, luaopen_bit32 },
+#endif
+	{ NULL, NULL }
+};
+
+static void _luaL_openlibs(lua_State* L) {
+	const luaL_Reg* lib;
+	/* "require" functions from 'loadedlibs' and set results to global table */
+	for(lib = loadedlibs; lib->func; lib++)
+	{
+		luaL_requiref(L, lib->name, lib->func, 1);
+		lua_pop(L, 1);  /* remove lib */
+	}
+}
+
+static lua_State* _luaL_RegistCoroutine(lua_State* L, const char* funcName)
+{
+	// コルーチンの生成とfunctionの登録
+	lua_State* co = lua_newthread(L);
+	lua_getglobal(co, funcName);
+	return co;
+}
+
+static void _luaL_ErrMsg(lua_State* L, int errcode) {
+	std::string luaErrMsg = lua_tostring(L, lua_gettop(L));
+	MessageBox(NULL, luaErrMsg.c_str(), "lua error", MB_OK);
+}
+
 // 初期化
 bool ModeGame::Initialize()
 {
 	if(!base::Initialize())
 	{
 		return false;
+	}
+
+	// luaの初期化
+	_L = luaL_newstate();
+	_luaL_openlibs(_L);
+
+	// toluaでの関数の登録
+	luaopen_cmd(_L);
+
+	// luaスクリプトの登録
+	{
+		CFile f("res/game.lua");
+		if (f.Data()) {
+			luaL_loadbuffer(_L, (const char*)f.Data(), f.Size(), "script");
+			int errcode = lua_pcall(_L, 0, 0, 0);
+			if (errcode != 0) {
+				// スクリプトにエラーがある
+				_luaL_ErrMsg(_L, errcode);
+			}
+		}
 	}
 
 	// カメラ初期化
@@ -189,9 +257,6 @@ void ModeGame::ChangeState(GameState nextState, int enemyId)
 // 計算処理
 bool ModeGame::Process()
 {
-	// ---------------------------------------------------------
-	// A. 【最優先】ゲームオーバー処理（タイトルへ戻る）
-	// ---------------------------------------------------------
 	int trg = ApplicationMain::GetInstance()->GetTrg();
 	if(_is_gameover)
 	{
@@ -205,9 +270,6 @@ bool ModeGame::Process()
 		return true; // ゲームオーバー中はこれ以降の処理を一切やらない
 	}
 
-	// ---------------------------------------------------------
-	// B. ★【World（移動中）のみ】動かす処理の部屋
-	// ---------------------------------------------------------
 	if(_gameState == GameState::World)
 	{
 		// 1. 敵の行動更新（ModeGame側の生存リストを正義にする！）
@@ -231,11 +293,9 @@ bool ModeGame::Process()
 			object->Process();
 		}
 
-		// 3. 敵の物理判定 ＆ 新・エンカウントチェック
-		// 💥敵とぶつかったら、この内部で ChangeSubState(Battle) が走ります
 		CheckEncount();
 
-		// 4. プレイヤーとステージ（壁キューブ）の判定
+		// プレイヤーとステージの判定
 		_resolve_on_y = false;
 		_landed_on_up = false;
 		for(auto& cube : _cube)
@@ -244,15 +304,15 @@ bool ModeGame::Process()
 		}
 		LandCheck();
 
-		// 5. 移動中専用のアクション・カメラ情報更新
+		// 移動中専用のアクション・カメラ情報更新
 		UpdateCheckAttackCollision();
 		PlayerCameraInfo();
 
-		// 6. フィールド上の敵が全滅したかのチェック
+		// フィールド上の敵が全滅したかのチェック
 		int alive_count = 0;
 		for(auto& enemy : enemies)
 		{
-			if(enemy->IsAlive()) ++alive_count; // ※念のため元の判定も残しつつ、alive_listベースにするなら _enemy_alive_list[i] でも可
+			if(enemy->IsAlive()) ++alive_count;//  生きている敵の数をカウント
 		}
 		if(alive_count == 0)
 		{
@@ -263,6 +323,17 @@ bool ModeGame::Process()
 			int remaining = _time_limit - elapsed_sec;
 			if(remaining < 0) remaining = 0;
 			if(_final_remaining_time < 0) _final_remaining_time = remaining;
+		}
+
+		// 制限時間のカウントダウン
+		unsigned long elapsed_ms = GetModeTm();
+		int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
+		int remaining = _time_limit - elapsed_sec;
+		if(remaining <= 0)
+		{
+			_is_gameover = true;
+			ModeServer::GetInstance()->SkipProcessUnderLayer();
+			if(_final_remaining_time < 0) _final_remaining_time = 0;
 		}
 	}
 
@@ -282,16 +353,7 @@ bool ModeGame::Process()
 		_camera->Process(); // 👈 これが外にあるのでバトル中も画面がフリーズしない
 	}
 
-	// 制限時間のカウントダウン
-	unsigned long elapsed_ms = GetModeTm();
-	int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
-	int remaining = _time_limit - elapsed_sec;
-	if(remaining <= 0)
-	{
-		_is_gameover = true;
-		ModeServer::GetInstance()->SkipProcessUnderLayer();
-		if(_final_remaining_time < 0) _final_remaining_time = 0;
-	}
+
 
 	return true;
 }
@@ -311,7 +373,7 @@ bool ModeGame::Render()
 	for(auto& chara : _chara)
 	{
 		// 1. まず、このキャラが「敵（Enemy）」のリストに含まれているか探す
-		int enemyIndex = -1;
+		size_t enemyIndex = -1;
 		for(size_t i = 0; i < enemies.size(); i++)
 		{
 			if(chara == enemies[i].get()) // ポインタの住所が一致するかチェック

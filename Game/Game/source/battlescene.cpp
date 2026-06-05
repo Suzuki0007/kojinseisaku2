@@ -22,7 +22,7 @@ void BattleScene::Update()
 void BattleScene::Render()
 {
 	// 敵のIDを表示する
-	DrawFormatString(100, 100, GetColor(255, 255, 255), "コマンドバトル開始！");
-	DrawFormatString(100, 140, GetColor(255, 255, 255), "敵（No.%d）に遭遇した！", _targetEnemyId);
-	DrawFormatString(100, 180, GetColor(255, 255, 0), "Enterキーを押してフィールドに戻る");
+	DrawFormatString(100, 100, GetColor(0, 0, 0), "コマンドバトル開始！");
+	DrawFormatString(100, 200, GetColor(0, 0, 0), "敵（No.%d）に遭遇した！", _targetEnemyId);
+	DrawFormatString(100, 300, GetColor(0, 0, 0), "キーを押してフィールドに戻る");
 }

@@ -139,19 +139,19 @@ bool Player::Process()
 	{
 		InputDevice& input = InputLocator::Get();
 
-		if(input.IsPress(InputButton::CommandDown))
+		if(input.IsPress(InputButton::StickDown))
 		{
 			v.x = 1;
 		}
-		if(input.IsPress(InputButton::CommandUp))
+		if(input.IsPress(InputButton::StickUp))
 		{
 			v.x = -1;
 		}
-		if(input.IsPress(InputButton::CommandLeft))
+		if(input.IsPress(InputButton::StickLeft))
 		{
 			v.z = -1;
 		}
-		if(input.IsPress(InputButton::CommandRight))
+		if(input.IsPress(InputButton::StickRight))
 		{
 			v.z = 1;
 		}

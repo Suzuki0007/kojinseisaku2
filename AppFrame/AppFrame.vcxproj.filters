@@ -31,12 +31,18 @@
     <Filter Include="ヘッダー ファイル\モード">
       <UniqueIdentifier>{fb319326-cb77-4d14-843c-d842240cb73e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ソース ファイル\lua">
+      <UniqueIdentifier>{8644dc12-86f8-4ecb-8747-e95c59af6d98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\lua\lua">
+      <UniqueIdentifier>{93a95aba-6489-4905-b410-404dc37381e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\lua\tolua">
+      <UniqueIdentifier>{a6e43c1e-0ed3-4d73-924c-84cb9c5d2411}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Application\winmain.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="source\CFile\CFile.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="source\Manager\timemanager.cpp">
@@ -62,6 +68,123 @@
     </ClCompile>
     <ClCompile Include="source\pch.cpp">
       <Filter>ソース ファイル\入力</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CFile\CFile.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lapi.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lauxlib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lbaselib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lcode.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lctype.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lcorolib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ldblib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ldebug.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ldo.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ldump.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lfunc.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lgc.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\linit.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\liolib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\llex.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lmathlib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lmem.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\loadlib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lobject.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lopcodes.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\loslib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lparser.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lstate.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lstring.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lstrlib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ltable.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ltablib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\ltm.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lundump.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lutf8lib.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lvm.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\lua_src\lzio.c">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\tolua_src\tolua_event.c">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\tolua_src\tolua_is.c">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\tolua_src\tolua_map.c">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\tolua_src\tolua_push.c">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\lua\tolua_src\tolua_to.c">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClCompile>
+    <ClCompile Include="source\CFile\utf8sjis.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,6 +252,99 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="source\math\matrix4convert.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lapi.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lauxlib.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lcode.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lctype.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\ldebug.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\ldo.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lfunc.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lgc.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\ljumptab.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\llex.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\llimits.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lmem.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lobject.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lopcodes.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lopnames.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lparser.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lprefix.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lstate.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lstring.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\ltable.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\ltm.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lua.hpp">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\luaconf.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lualib.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lundump.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lvm.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lzio.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\tolua_src\tolua.h">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\tolua_src\tolua_event.h">
+      <Filter>ソース ファイル\lua\tolua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\lua\lua_src\lua.h">
+      <Filter>ソース ファイル\lua\lua</Filter>
+    </ClInclude>
+    <ClInclude Include="source\CFile\utf8sjis.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

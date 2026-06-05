@@ -44,4 +44,7 @@
 #include <cwctype>
 #include <streambuf>
 #include <cstddef>
-#include <cctype> 
+#include <cctype>
+#include <string_view>
+#include <filesystem>
+#include <span>

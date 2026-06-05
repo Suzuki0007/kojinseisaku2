@@ -18,9 +18,12 @@ public:
 	T z{ 0 };
 	T w{ 0 };
 
-	constexpr Vector4() = default;
-	constexpr Vector4(T x, T y, T z, T w = {1.0f})
-		: x(x), y(y), z(z), w(w)
+	constexpr Vector4() : data{ 0, 0, 0, 0 }
+	{
+	}
+
+	constexpr Vector4(T x, T y, T z, T w = {T(1)})
+		: data{ x, y, z, w }
 	{
 	}
 

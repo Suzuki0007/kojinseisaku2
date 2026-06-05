@@ -1,8 +1,5 @@
 ﻿#pragma once
-//#include "appframe.h"
-#include <string>
-#include <vector>
-#include <memory>
+#include "lua.hpp"
 #include "modemenu.h"
 #include "charabase.h"
 #include "objectbase.h"
@@ -23,8 +20,6 @@ class ModeGame : public ModeBase, public GameObserver
 {
 	typedef ModeBase base;
 public:
-
-
 	enum class GameResult
 	{
 		Continue, // 今のシーンをそのまま続ける
@@ -113,5 +108,8 @@ protected:
 	std::unique_ptr<SceneBase> _sceneBase;
 	GameState _gameState{ GameState::World };
 	int _enemyIndexBattle{ -1 };// 現在戦っている敵の配列番号
+
+	// lua用
+	lua_State* _L;
 };
 

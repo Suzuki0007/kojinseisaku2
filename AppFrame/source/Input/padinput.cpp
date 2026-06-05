@@ -14,7 +14,7 @@ PadInput::PadInput()
 	m_PadMap[std::to_underlying(InputButton::CommandLeft)] = 134;
 	m_PadMap[std::to_underlying(InputButton::CommandRight)] = 135;
 
-	m_PadMap[std::to_underlying(InputButton::SceneDebug)] = PAD_INPUT_1;// デバッグ用に、10番目のボタンを割り当てる
+	m_PadMap[std::to_underlying(InputButton::SceneDebug)] = 0;// Aボタン
 }
 
 void PadInput::Update()

@@ -1,31 +1,27 @@
 ﻿#pragma once
-
 #include <string>
+#include <string_view>
+#include <filesystem>
+#include <span>
 
 class CFile
 {
 public:
 	// 読み込み
-	CFile(const std::string filename);
+	explicit CFile(const std::filesystem::path& filename);
 	// 書き込み
-	CFile(const std::string filename, void* data, int size);		// バイナリデータ
-	CFile(const std::string filename, const std::string writestr) : CFile(filename, (void*)writestr.c_str(), (int)writestr.size()) {		// 文字列データ
-		// 委任コンストラクタで、バイナリデータ書き込みを呼び出す
-	}
+	CFile(const std::filesystem::path& filename, std::span<const std::byte> data);		// バイナリデータ
+	CFile(const std::filesystem::path& filename, std::string_view writestr);	// 文字列データ
 
-	~CFile();
-	std::string	Filename() { return _filename; }
-	void* Data() { return _data; }
-	std::string DataStr() { return std::string(_data); }
-	int Size() { return _size; }
+	~CFile() = default;
+	std::filesystem::path Filename() { return _filename; }
+	const char* Data() { return _data.data(); }
+	std::string_view DataStr() const { return _data; }
+	size_t Size() const { return _data.size(); }
 	bool Success() { return _success; }
 
 private:
-	void Init();
-
-	std::string		_filename;
-
-	int		_size;
-	char* _data;
-	bool	_success;
+	std::filesystem::path		_filename;
+	std::string _data{};
+	bool	_success { false };
 };

@@ -361,7 +361,6 @@ bool ModeGame::CheckEncount()
 
 	for(int i = 0; i < enemies.size(); i++)
 	{
-		// 1. 【超重要】既に倒された敵（生存リストがfalse）なら、物理も判定もすべてスルー！
 		if(!_enemy_alive_list[i])
 		{
 			continue;
@@ -369,16 +368,16 @@ bool ModeGame::CheckEncount()
 
 		auto& enemy = enemies[i];
 
-		// 3. 【あなたの動くコード！】円同士の当たり判定チェック
+		// 円同士の当たり判定チェック
 		if(IsHitCircle(player, enemy.get()))
 		{
-			// 戦う敵の番号（出席番号）をメモ
+			// 戦う敵の番号
 			_enemyIndexBattle = i;
 
-			// 工場を動かしてバトルシーンへ遷移！
+			// バトルシーンへ
 			ChangeState(GameState::Battle, i);
 
-			return true; // 1体と当たったら処理を抜ける
+			return true;
 		}
 	}
 	return false;
@@ -477,8 +476,6 @@ bool ModeGame::UpdateCheckAttackCollision()
 				Mat4 frame_world = MC::MMult(frame_local, model_world);
 
 				// 剣の根元と先端のローカル座標
-				// 注意: モデルによって剣の向き(どの軸が刃方向か)が異なる場合がある
-				// 必要に応じて (0,0,150) を (150,0,0) や (0,0,-150) に変更してください
 				Vec4 local_under_pos = v::VGet(50.0f, 50.0f, -100.0f);
 				Vec4 local_over_pos = v::VGet(50.0f, 50.0f, -100.0f);
 

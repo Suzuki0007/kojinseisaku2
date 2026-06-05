@@ -4,73 +4,77 @@
 
 
 // 読み込み
-CFile::CFile(const std::string filename) {
-	// メンバの初期化
-	Init();
-	_filename = filename;
-
+CFile::CFile(const std::filesystem::path& filename)
+	:_filename(filename)
+{
 	// ファイルを開く
 	std::ifstream ifs(filename, std::ios::in | std::ios::binary);	// 入力をバイナリ形式で
-	if (!ifs) {
+	if (!ifs)
+	{
 		// 開くの失敗
 		return;
 	}
 
 	// ファイルサイズの取得
 	ifs.seekg(0, std::ios_base::end);
-	_size = (int)ifs.tellg();
+	size_t size = ifs.tellg();
 	ifs.seekg(0, std::ios_base::beg);
 
-	// メモリを確保
-	// 文字列として利用できるように、+1byte余計に確保
-	_data = new char[_size + 1];
+	if (size == 0)
+	{
+		// ファイルが空
+		return;
+	}
 
-	// ファイルをロード
-	ifs.read(_data, _size);
-
-	// ファイルを閉じる
-	ifs.close();
-
-	// 文字列として利用できるように、データの末端に\0を付ける
-	_data[_size] = '\0';
+	// データの読み込み
+	_data.resize_and_overwrite(size, [ & ] (char* buf, size_t buf_size)
+		{
+			ifs.read
+			(
+				buf,// 読み込むバッファ
+				static_cast< std::streamsize >( buf_size )// 読み込むサイズ
+			);
+			return buf_size;
+		});
 
 	// 処理成功
 	_success = true;
 }
 
 // 書き込み
-CFile::CFile(const std::string filename, void* data, int size) {
-	// メンバの初期化
-	Init();
-	_filename = filename;
+CFile::CFile(const std::filesystem::path& filename, std::span<const std::byte> data)
+	:_filename(filename)
+{
+
 
 	// ファイルを開く
 	std::ofstream ofs(filename, std::ios::out | std::ios::binary);	// 出力をバイナリ形式で
-	if (!ofs) {
+	if (!ofs) 
+	{
 		// 開くの失敗
 		return;
 	}
 
 	// データの書き込み
-	ofs.write((char*)data, size);
-
-	// ファイルを閉じる
-	ofs.close();
+	// reinterpret_cast<const char*>で、std::byte*をchar*に変換してから書き込む
+	ofs.write(reinterpret_cast<const char*>(data.data()), data.size_bytes());
 
 	// 処理成功
 	_success = true;
 }
 
-// 書き込み
-
-
-CFile::~CFile() {
-	SAFE_DELETE(_data);
-}
-
-void CFile::Init() {
-	_size = 0;
-	_data = NULL;
-	_filename = "";
-	_success = false;
+CFile::CFile(const std::filesystem::path& filename, std::string_view writestr)
+	:_filename(filename)
+{
+	// ファイルを開く
+	std::ofstream ofs(filename, std::ios::out | std::ios::binary);	// 出力をバイナリ形式で
+	if (!ofs)
+	{
+		// 開くの失敗
+		return;
+	}
+	// データの書き込み
+	ofs.write(writestr.data(),writestr.size());
+	// 処理成功
+	_success = true;
 }
