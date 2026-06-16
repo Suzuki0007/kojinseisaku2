@@ -12,3 +12,4 @@
 #include "Component/componentowner.h"
 #include "math/vectorconvert.h"
 #include "math/matrix4convert.h"
+#include "state/statemachine.h"

@@ -1,22 +1,22 @@
 #pragma once
 #include "charabase.h"
+#include "alivestate.h"
+#include "deadstate.h"
 
 class HealthComponent : public Component<CharaBase>
 {
 public:
-	explicit HealthComponent(CharaBase& owner) : Component(owner) {}
-	HealthComponent() = default;
-	virtual ~HealthComponent() = default;
-	auto GetHP() const { return _hp; }
-	auto GetMaxHP() const { return _maxHp; }
-	auto IsDead() const { return _isDead; }
-	void ApplyDamage(int damage);
+	explicit HealthComponent(CharaBase& owner) : Component(owner), _stateMachine(AliveState()) {}
+	virtual ~HealthComponent() {}
+	virtual bool IsAlive() const;
+	virtual void ApplyDamage(float damage);
 
-	void ForceDeath() { _hp = 0; _isDead = true; }
+	auto GetHP() const;	// HP取得用ゲッター
+	auto GetMaxHP() const; // 最大HP取得用ゲッター
+
+	void SetHP(float hp);
 
 private:
-	int _hp{ 100 }; // 現在のHP
-	int _maxHp{ 100 }; // 最大HP
-	bool _isDead{ false }; // 死亡フラグ
+	StateMachine<AliveState, DeadState> _stateMachine{ AliveState() };
 };
 

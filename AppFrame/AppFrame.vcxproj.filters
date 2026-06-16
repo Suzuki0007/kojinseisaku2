@@ -347,5 +347,8 @@
     <ClInclude Include="source\CFile\utf8sjis.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="source\state\statemachine.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

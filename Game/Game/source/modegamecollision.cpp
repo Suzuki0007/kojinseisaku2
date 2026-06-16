@@ -361,7 +361,7 @@ bool ModeGame::CheckEncount()
 
 	for(int i = 0; i < enemies.size(); i++)
 	{
-		if(!_enemy_alive_list[i])
+		if(!_enemyAliveList[i])
 		{
 			continue;
 		}

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "appframe.h"
+#include "CFile/utf8sjis.h"
 
 #include <stdio.h>
 #include <stdlib.h>

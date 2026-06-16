@@ -13,10 +13,10 @@ requires std::integral<T> || std::floating_point<T>
 class Vector4
 {
 public:
-	T x{ 0 };
-	T y{ 0 };
-	T z{ 0 };
-	T w{ 0 };
+	//T x{ 0 };
+	//T y{ 0 };
+	//T z{ 0 };
+	//T w{ 0 };
 
 	constexpr Vector4() : data{ 0, 0, 0, 0 }
 	{

@@ -30,7 +30,8 @@ static const luaL_Reg loadedlibs[] =
 	{ NULL, NULL }
 };
 
-static void _luaL_openlibs(lua_State* L) {
+static void _luaL_openlibs(lua_State* L)
+{
 	const luaL_Reg* lib;
 	/* "require" functions from 'loadedlibs' and set results to global table */
 	for(lib = loadedlibs; lib->func; lib++)
@@ -48,7 +49,8 @@ static lua_State* _luaL_RegistCoroutine(lua_State* L, const char* funcName)
 	return co;
 }
 
-static void _luaL_ErrMsg(lua_State* L, int errcode) {
+static void _luaL_ErrMsg(lua_State* L, int errcode)
+{
 	std::string luaErrMsg = lua_tostring(L, lua_gettop(L));
 	MessageBox(NULL, luaErrMsg.c_str(), "lua error", MB_OK);
 }
@@ -71,12 +73,18 @@ bool ModeGame::Initialize()
 	// luaスクリプトの登録
 	{
 		CFile f("res/game.lua");
-		if (f.Data()) {
+		if (f.Data())
+		{
 			luaL_loadbuffer(_L, (const char*)f.Data(), f.Size(), "script");
 			int errcode = lua_pcall(_L, 0, 0, 0);
-			if (errcode != 0) {
+			if (errcode != 0)
+			{
 				// スクリプトにエラーがある
 				_luaL_ErrMsg(_L, errcode);
+			}
+			else
+			{
+				_coL = _luaL_RegistCoroutine(_L, "DrawEnemy");
 			}
 		}
 	}
@@ -148,11 +156,11 @@ bool ModeGame::Initialize()
 	auto& enemies = EnemyManager::GetInstance()->GetEnemies();
 	_enemy_count = static_cast<int>(enemies.size());
 
-	_enemy_alive_list.clear();
-	_enemy_alive_list.resize(_enemy_count, false);
+	_enemyAliveList.clear();
+	_enemyAliveList.resize(_enemy_count, false);
 	for(size_t i = 0; i < enemies.size(); ++i)
 	{
-		_enemy_alive_list[i] = enemies[i]->IsAlive();
+		_enemyAliveList[i] = enemies[i]->IsAlive();
 	}
 
 	InputDevice& input = InputLocator::Get();
@@ -185,7 +193,7 @@ PlayerBase* ModeGame::GetPlayer() const
 	return PlayerManager::GetInstance()->GetPlayer().get();
 }
 
-const std::vector<std::unique_ptr<EnemyBase>>& ModeGame::GetEnemies() const
+std::vector<std::unique_ptr<EnemyBase>>& ModeGame::GetEnemies()
 {
 	return EnemyManager::GetInstance()->GetEnemies();
 }
@@ -235,9 +243,9 @@ void ModeGame::ChangeState(GameState nextState, int enemyId)
 	if(_gameState == GameState::Battle && nextState == GameState::World)
 	{
 		// バトル終了時の処理
-		if(_enemyIndexBattle >= 0 && _enemyIndexBattle < _enemy_alive_list.size())
+		if(_enemyIndexBattle >= 0 && _enemyIndexBattle < _enemyAliveList.size())
 		{
-			_enemy_alive_list[_enemyIndexBattle] = false;
+			_enemyAliveList[_enemyIndexBattle] = false;
 			_enemy_count--;
 		}
 		_enemyIndexBattle = -1;
@@ -252,6 +260,15 @@ void ModeGame::ChangeState(GameState nextState, int enemyId)
 	}
 
 	_gameState = nextState;
+}
+
+bool ModeGame::IsEnemyAliveFromList(int index) const
+{
+	if(index >= 0 && index < static_cast<int>(_enemyAliveList.size()))
+	{
+		return _enemyAliveList[index];
+	}
+	return false;
 }
 
 // 計算処理
@@ -276,7 +293,7 @@ bool ModeGame::Process()
 		auto& enemies = GetEnemies();
 		for(size_t i = 0; i < enemies.size(); i++)
 		{
-			if(_enemy_alive_list[i]) // 生きている敵だけ
+			if(_enemyAliveList[i]) // 生きている敵だけ
 			{
 				enemies[i]->Process();
 			}
@@ -388,7 +405,7 @@ bool ModeGame::Render()
 		{
 			// このキャラは「敵」だった！
 			// ModeGameの生存メモを見て、すでに倒されているなら描画をスキップする
-			if(!_enemy_alive_list[enemyIndex])
+			if(!_enemyAliveList[enemyIndex])
 			{
 				continue; //  ここで弾くことで、画面に映らなくなります！
 			}
@@ -420,22 +437,22 @@ bool ModeGame::Render()
     // 敵のHP情報を画面に表示（生存している敵のみ）と生存カウント取得
     // フォントサイズを小さくして表示する
     SetFontSize(16);
-    int y_offset = 10; // 画面上部からのオフセット
-    int alive_count = 0; // 生存している敵のカウント用
-    for(int i = 0; i < enemies.size(); i++)
-    {
-		auto& enemy = enemies[i];
+	if(_coL)
+	{
+		int narg = 0;
+		int nresult = 0;
+		int ret = lua_resume(_coL, NULL, narg, &nresult);
 
-		if(_enemy_alive_list[i])
+		if(ret != LUA_YIELD)
 		{
-			DrawFormatString(10, y_offset + (alive_count * 20), GetColor(255, 0, 0),
-				"Enemy[%d] HP: %1f",
-				i,
-				enemy->GetHP()
-			);
-			alive_count++;
+			// コルーチンが終了している（エラーも含む）
+			if(ret != 0)
+			{
+				_luaL_ErrMsg(_coL, ret);
+			}
+			_coL = NULL; // コルーチンはもう使えないので無効化
 		}
-    }
+	}
 
 	 SetFontSize(64);
 
@@ -460,6 +477,14 @@ bool ModeGame::Render()
 		DrawFormatString(500, 10, GetColor(0, 0, 0), "Time: %d", display_time);
 	}
     
+	int alive_count = 0;
+	for (size_t i = 0; i < _enemyAliveList.size(); ++i)
+	{
+		if (_enemyAliveList[i])
+		{
+			alive_count++;
+		}
+	}
 
 	// ゲームオーバー時の表示
 	if(_is_gameover)

@@ -19,12 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="source\alivestate.h" />
     <ClInclude Include="source\applicationglobal.h" />
     <ClInclude Include="source\applicationmain.h" />
     <ClInclude Include="source\battlescene.h" />
     <ClInclude Include="source\camera.h" />
     <ClInclude Include="source\charabase.h" />
     <ClInclude Include="source\cube.h" />
+    <ClInclude Include="source\deadcomponent.h" />
+    <ClInclude Include="source\deadstate.h" />
     <ClInclude Include="source\enemy.h" />
     <ClInclude Include="source\enemybase.h" />
     <ClInclude Include="source\enemyfactory.h" />
@@ -32,6 +35,7 @@
     <ClInclude Include="source\gameobserver.h" />
     <ClInclude Include="source\healthcomponent.h" />
     <ClInclude Include="source\jumpcomponet.h" />
+    <ClInclude Include="source\luabase.h" />
     <ClInclude Include="source\lua_cmd.h" />
     <ClInclude Include="source\map.h" />
     <ClInclude Include="source\menuitembase.h" />
@@ -53,12 +57,14 @@
     <ClInclude Include="source\worldscene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\alivestate.cpp" />
     <ClCompile Include="source\applicationglobal.cpp" />
     <ClCompile Include="source\applicationmain.cpp" />
     <ClCompile Include="source\battlescene.cpp" />
     <ClCompile Include="source\camera.cpp" />
     <ClCompile Include="source\charabase.cpp" />
     <ClCompile Include="source\cube.cpp" />
+    <ClCompile Include="source\deadstate.cpp" />
     <ClCompile Include="source\enemy.cpp" />
     <ClCompile Include="source\enemybase.cpp" />
     <ClCompile Include="source\enemyfactory.cpp" />
@@ -66,6 +72,7 @@
     <ClCompile Include="source\gameobserver.cpp" />
     <ClCompile Include="source\healthcomponent.cpp" />
     <ClCompile Include="source\jumpcomponet.cpp" />
+    <ClCompile Include="source\luabase.cpp" />
     <ClCompile Include="source\lua_cmd.cpp" />
     <ClCompile Include="source\map.cpp" />
     <ClCompile Include="source\menuitembase.cpp" />

@@ -72,11 +72,13 @@ public:
 
 	void ChangeState(GameState nextState, int enemyId);
 
+	std::vector<std::unique_ptr<EnemyBase>>& GetEnemies();
+
+	bool IsEnemyAliveFromList(int index) const;
+
 private:
 	// プレイヤーのヘルパー関数
 	PlayerBase* GetPlayer() const;
-	const std::vector<std::unique_ptr<EnemyBase>>& GetEnemies() const;
-
 
 protected:
 	Camera* _camera;
@@ -101,7 +103,8 @@ protected:
 	int _time_limit;// 制限時間
 	bool _is_gameover;// ゲームオーバーフラグ
 	int _enemy_count;// 敵の総数
-	std::vector<bool> _enemy_alive_list;// 敵の生存フラグリスト
+	std::vector<bool> _enemyAliveList;// 敵の生存フラグリスト
+	std::vector<int> _enemyOrderList;// 敵の死亡順リスト
 	// 全滅または時間切れになったときの残り時間を保持。未設定は -1
 	int _final_remaining_time;
 
@@ -111,5 +114,6 @@ protected:
 
 	// lua用
 	lua_State* _L;
+	lua_State* _coL{ nullptr };
 };
 
