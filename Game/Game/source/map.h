@@ -1,10 +1,8 @@
 ﻿#pragma once
 #include "objectbase.h"
-#include "appframe.h"
 #include "camera.h"
-#include <map>
 
-class Map : public ObjectBase
+class Map : public ObjectBase 
 {
 	typedef ObjectBase base;
 public:

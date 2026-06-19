@@ -3,7 +3,7 @@
 #include "camera.h"
 #include "pch.h"
 
-class CharaBase : public ObjectBase
+class CharaBase : public ObjectBase, public IComponentBindable<CharaBase>
 {
 	typedef ObjectBase base;
 public:
@@ -21,6 +21,8 @@ public:
 		_EOT_
 	};
 	STATUS _status;
+
+	virtual ~CharaBase();
 
 	virtual bool Initialize();
 	virtual bool Terminate();
@@ -60,23 +62,6 @@ public:
 		if(!_jumpRequest) {return false;}
 		_jumpRequest = false;
 		return true;
-	}
-
-
-	template <class T, class ... Args>
-	T* AddComponent(Args&& ... args)
-	{
-		return _comOwner.AddComponent<T>(*this, std::forward<Args>(args)...);
-	}
-
-	void UpdateComponent(float deltaTime)
-	{
-		_comOwner.Update(deltaTime);
-	}
-
-	void ClearComponent()
-	{
-		_comOwner.Clear();
 	}
 
 protected:

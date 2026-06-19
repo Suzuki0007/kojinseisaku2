@@ -123,6 +123,18 @@
     <ClInclude Include="source\deadstate.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="source\mapbase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\resourcpath.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\skyspherecomponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="source\shadowmapcomponent.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\applicationmain.cpp">
@@ -231,6 +243,15 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="source\deadstate.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mapbase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="source\skyspherecomponent.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="source\shadowmapcomponent.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>

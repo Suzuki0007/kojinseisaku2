@@ -2,6 +2,7 @@
 
 #include "playerbase.h"
 #include "camera.h"
+
 class Player : public PlayerBase
 {
 	typedef PlayerBase base;

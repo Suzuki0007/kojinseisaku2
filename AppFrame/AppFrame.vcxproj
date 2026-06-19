@@ -166,7 +166,9 @@
     <ClInclude Include="source\CFile\utf8sjis.h" />
     <ClInclude Include="source\Component\actor.h" />
     <ClInclude Include="source\Component\component.h" />
+    <ClInclude Include="source\Component\componentbindable.h" />
     <ClInclude Include="source\Component\componentowner.h" />
+    <ClInclude Include="source\Handle\safehandle.h" />
     <ClInclude Include="source\Input\inputdevice.h" />
     <ClInclude Include="source\Input\inputlocator.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -217,6 +219,8 @@
     <ClInclude Include="source\Mode\ModeServer.h" />
     <ClInclude Include="source\mymath.h" />
     <ClInclude Include="source\pch.h" />
+    <ClInclude Include="source\Resource\resourcefacade.h" />
+    <ClInclude Include="source\Resource\resourceserver.h" />
     <ClInclude Include="source\singleton.h" />
     <ClInclude Include="source\state\statemachine.h" />
   </ItemGroup>
@@ -225,6 +229,7 @@
     <ClCompile Include="source\Application\winmain.cpp" />
     <ClCompile Include="source\CFile\CFile.cpp" />
     <ClCompile Include="source\CFile\utf8sjis.cpp" />
+    <ClCompile Include="source\Handle\safehandle.cpp" />
     <ClCompile Include="source\Input\inputlocator.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>

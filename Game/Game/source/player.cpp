@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "player.h"
+#include "resourcpath.h"
 
 // プレイヤーの移動
 bool Player::PlayerMove(Vec4 v)
@@ -13,7 +14,7 @@ bool Player::PlayerMove(Vec4 v)
 bool Player::Initialize()
 {
 	if(!base::Initialize()) { return false; }
-	_handle = MV1LoadModel("res/Player/Player.mv1");
+	_handle = Load::LoadModel(path::Player("Player"));
 	_attach_index = -1;
 	// ステータスを「無し」に設定
 	_status = STATUS::NONE;

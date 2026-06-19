@@ -1,6 +1,11 @@
 ﻿#include "pch.h"
 #include "charabase.h"
 
+CharaBase::~CharaBase()
+{
+	ClearComponent();
+}
+
 // 初期化
 bool CharaBase::Initialize()
 {
@@ -24,7 +29,6 @@ bool CharaBase::Initialize()
 bool CharaBase::Terminate()
 {
 	base::Terminate();
-	ClearComponent();
 	return true;
 }
 

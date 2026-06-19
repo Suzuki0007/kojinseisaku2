@@ -1,9 +1,7 @@
 #pragma once
-#include "appframe.h"
 #include "playerbase.h"
 #include "playerfactory.h"
 #include "objectmanagerbase.h"
-#include <string>
 
 class PlayerManager : public Singleton<PlayerManager>, public ObjectManagerBase<PlayerBase, PlayerFactory>
 {

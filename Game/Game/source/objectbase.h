@@ -22,6 +22,7 @@ public:
 protected:
 	Camera* _cam;
 	int _handle;
+	handle::ModelHandle _mHandle { -1 };
 	float _half_polygon_size;
 	COLOR_U8 _diffuse;
 	COLOR_U8 _specular;

@@ -38,6 +38,7 @@
     <ClInclude Include="source\luabase.h" />
     <ClInclude Include="source\lua_cmd.h" />
     <ClInclude Include="source\map.h" />
+    <ClInclude Include="source\mapbase.h" />
     <ClInclude Include="source\menuitembase.h" />
     <ClInclude Include="source\modeeffekseer.h" />
     <ClInclude Include="source\modegame.h" />
@@ -51,8 +52,11 @@
     <ClInclude Include="source\playerbase.h" />
     <ClInclude Include="source\playerfactory.h" />
     <ClInclude Include="source\PlayerManager.h" />
+    <ClInclude Include="source\resourcpath.h" />
     <ClInclude Include="source\scenebase.h" />
     <ClInclude Include="source\scenefactory.h" />
+    <ClInclude Include="source\shadowmapcomponent.h" />
+    <ClInclude Include="source\skyspherecomponent.h" />
     <ClInclude Include="source\tolua_cmd\luaglue_cmd.h" />
     <ClInclude Include="source\worldscene.h" />
   </ItemGroup>
@@ -75,6 +79,7 @@
     <ClCompile Include="source\luabase.cpp" />
     <ClCompile Include="source\lua_cmd.cpp" />
     <ClCompile Include="source\map.cpp" />
+    <ClCompile Include="source\mapbase.cpp" />
     <ClCompile Include="source\menuitembase.cpp" />
     <ClCompile Include="source\modeeffekseer.cpp" />
     <ClCompile Include="source\modegame.cpp" />
@@ -93,6 +98,8 @@
     <ClCompile Include="source\playerfactory.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\scenefactory.cpp" />
+    <ClCompile Include="source\shadowmapcomponent.cpp" />
+    <ClCompile Include="source\skyspherecomponent.cpp" />
     <ClCompile Include="source\tolua_cmd\luaglue_cmd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -230,6 +237,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpp23</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

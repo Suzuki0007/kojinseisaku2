@@ -1,34 +1,26 @@
-#pragma once
-#include "componentowner.h"
+﻿#pragma once
+#include "componentbindable.h"
 
-class Actor
+class Actor : public IComponentBindable<Actor>
 {
 public:
 	Actor() = default;
 	virtual ~Actor() = default;
 	
-	template <class T, class ... Args>
-	T* Add(Args&& ... args)
-	{
-		return _componentOwner.AddComponent<T>(*this, std::forward<Args>(args)...);
-	}
-
 	void Update(float deltaTime)
 	{
-		_componentOwner.Update(deltaTime);
+		UpdateComponent(deltaTime);
 	}
 
 	void Render()
 	{
-		_componentOwner.Render();
+		RenderComponent();
 	}
 
 	void Clear()
 	{
-		_componentOwner.Clear();
+		ClearComponent();
 	}
 
-private:
-	ComponentOwner<Actor> _componentOwner;
 };
 
