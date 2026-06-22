@@ -1,9 +1,10 @@
 ﻿#pragma once
 #include "objectbase.h"
 #include "camera.h"
+#include "battlereceiver.h"
 #include "pch.h"
 
-class CharaBase : public ObjectBase, public IComponentBindable<CharaBase>
+class CharaBase : public ObjectBase, public IComponentBindable<CharaBase>, public IBattleReceiver
 {
 	typedef ObjectBase base;
 public:

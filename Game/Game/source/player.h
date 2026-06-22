@@ -3,6 +3,7 @@
 #include "playerbase.h"
 #include "camera.h"
 
+
 class Player : public PlayerBase
 {
 	typedef PlayerBase base;
@@ -12,7 +13,9 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
+	virtual void CommandAttack(IBattleReceiver* target) override;
 
+	virtual bool IsExceutionAction() const override;
 
 	void SetCamera(Camera* cam)  override { _cam = cam; }
 

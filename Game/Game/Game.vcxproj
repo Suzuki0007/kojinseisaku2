@@ -22,9 +22,13 @@
     <ClInclude Include="source\alivestate.h" />
     <ClInclude Include="source\applicationglobal.h" />
     <ClInclude Include="source\applicationmain.h" />
+    <ClInclude Include="source\attackaction.h" />
+    <ClInclude Include="source\battleaction.h" />
+    <ClInclude Include="source\battlereceiver.h" />
     <ClInclude Include="source\battlescene.h" />
     <ClInclude Include="source\camera.h" />
     <ClInclude Include="source\charabase.h" />
+    <ClInclude Include="source\charastate.h" />
     <ClInclude Include="source\cube.h" />
     <ClInclude Include="source\deadcomponent.h" />
     <ClInclude Include="source\deadstate.h" />
@@ -64,9 +68,11 @@
     <ClCompile Include="source\alivestate.cpp" />
     <ClCompile Include="source\applicationglobal.cpp" />
     <ClCompile Include="source\applicationmain.cpp" />
+    <ClCompile Include="source\attackaction.cpp" />
     <ClCompile Include="source\battlescene.cpp" />
     <ClCompile Include="source\camera.cpp" />
     <ClCompile Include="source\charabase.cpp" />
+    <ClCompile Include="source\charastate.cpp" />
     <ClCompile Include="source\cube.cpp" />
     <ClCompile Include="source\deadstate.cpp" />
     <ClCompile Include="source\enemy.cpp" />

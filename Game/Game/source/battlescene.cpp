@@ -1,9 +1,35 @@
 ﻿#include "pch.h"
 #include "battlescene.h"
+#include "playerbase.h"
+#include "PlayerManager.h"
+#include "EnemyManager.h"
+
+IBattleReceiver* BattleScene::GetPlayer() 
+{
+	auto& player = PlayerManager::GetInstance()->GetPlayer();
+	if(player)
+	{
+		return player.get();
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+IBattleReceiver* BattleScene::GetEnemy() const
+{
+	auto& enemy = EnemyManager::GetInstance()->GetEnemy(_targetEnemyId);
+	if(enemy)
+	{
+		return enemy.get();
+	}
+	return nullptr;
+}
 
 void BattleScene::Initialize()
 {
-	
+
 }
 
 void BattleScene::Update()

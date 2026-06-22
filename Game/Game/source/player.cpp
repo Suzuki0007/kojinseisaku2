@@ -108,6 +108,20 @@ bool Player::AttackCapsule(Vec4 underpos, Vec4 overpos, float r, int waittime, i
 	return true;
 }
 
+void Player::CommandAttack(IBattleReceiver* target)
+{
+	if(_status != STATUS::ATTACK)
+	{
+		_status = STATUS::ATTACK;
+		Attack();
+	}
+}
+
+bool Player::IsExceutionAction() const
+{
+	return _status == STATUS::ATTACK;
+}
+
 // 計算処理
 bool Player::Process()
 {
