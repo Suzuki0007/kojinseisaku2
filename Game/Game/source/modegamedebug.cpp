@@ -76,7 +76,7 @@ bool ModeGame::DebugRender()
 
 	if(_d_view_collision)
 	{
-		auto* player = PlayerManager::GetInstance()->GetPlayer().get();
+		auto* player = PlayerManager::GetInstance()->GetPlayer().front().get();
 		if(!player) { return false; }
 		auto& attack_list = player->GetAttackCollisionList();
 		for(auto& attack : attack_list)

@@ -45,7 +45,7 @@ public:
 	bool IsHitCircle(CharaBase* c1, CharaBase* c2);
 	bool IsHitCircle(CharaBase* target)
 	{
-		auto* player = PlayerManager::GetInstance()->GetPlayer().get();
+		auto* player = PlayerManager::GetInstance()->GetPlayer().front().get();
 		return IsHitCircle(player, target);
 	}
 

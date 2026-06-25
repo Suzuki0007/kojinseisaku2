@@ -6,7 +6,7 @@
 
 class Player : public PlayerBase
 {
-	typedef PlayerBase base;
+	using base = PlayerBase;
 public:
 	virtual bool Initialize();
 	virtual bool Terminate();

@@ -23,6 +23,13 @@ public:
 	};
 	STATUS _status;
 
+	struct AnimConfig
+	{
+		std::string_view idle;
+		std::string_view walk;
+		std::string_view attack;
+	};
+
 	virtual ~CharaBase();
 
 	virtual bool Initialize();
@@ -33,6 +40,7 @@ public:
 	const Vec4& GetPos() const { return _pos; }
 	const Vec4& GetOldPos() const { return _oldPos; }
 	const Vec4& SetPos(const Vec4& pos) { return _pos = pos; }
+	const Vec4& SetDir(const Vec4& dir) { return _dir = dir; }
 	auto GetColSubY() const { return _col_sub_y; }
 	auto GetCollisionR() const { return _collision_r; }
 	auto GetCollisionWeight() const { return _collision_weight; }
@@ -65,6 +73,20 @@ public:
 		return true;
 	}
 
+	void SetOnAnimEndCallback(std::move_only_function<void()>&& callback)
+	{
+		_onAnimEnd = std::move(callback);
+	}
+	void ExecuteOnAnimEnd()
+	{
+		if(_onAnimEnd)
+		{
+			_onAnimEnd();
+			_onAnimEnd = nullptr;
+		}
+	}
+	AnimConfig& GetAnimConfig() { return _animConfig; }
+
 protected:
 	int _attach_index;
 	float _total_time;
@@ -84,6 +106,9 @@ protected:
 	float _jumpHeight { 0.0f }; // ジャンプの高さ
 	float _gravity { 0.0f }; // 重力の強さ
 	bool _jumpCount { true };			// ジャンプ回数制限用フラグ
+	AnimConfig _animConfig; // アニメーション名の設定
+
+	std::move_only_function<void()> _onAnimEnd{ nullptr }; // アニメーション終了時のコールバック関数
 
 	ComponentOwner<CharaBase> _comOwner; // コンポーネント
 };

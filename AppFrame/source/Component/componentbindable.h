@@ -4,6 +4,7 @@
 template <class TOwner>
 class IComponentBindable
 {
+	friend class IComponentBindable<TOwner>;
 public:
 	virtual ~IComponentBindable() = default;
 
@@ -29,18 +30,18 @@ public:
 		_comOwner.Clear();
 	}
 
-	template <class T>
-	T* GetComponent()
-	{
-		for(auto& component : _comOwner._component)
-		{
-			if(auto derived = dynamic_cast< T* >( component.get() ))
-			{
-				return derived;
-			}
-		}
-		return nullptr;
-	}
+	//template <class T>
+	//T* GetComponent()
+	//{
+	//	for(auto& component : _comOwner._component)
+	//	{
+	//		if(auto derived = dynamic_cast< T* >( component.get() ))
+	//		{
+	//			return derived;
+	//		}
+	//	}
+	//	return nullptr;
+	//}
 
 protected:
 	ComponentOwner<TOwner> _comOwner;

@@ -31,7 +31,7 @@ public:
 		return _object[index].get(); 
 	}
 	std::vector<std::unique_ptr<T>>& GetAll() { return _object; }
-	std::unique_ptr<T>& GetOwner() { return _object.front(); }
+	const std::vector<std::unique_ptr<T>>& GetOwner() { return _object; }
 
 protected:
 	ObjectManagerBase() = default;

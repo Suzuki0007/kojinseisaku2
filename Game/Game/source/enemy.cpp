@@ -36,6 +36,16 @@ bool Enemy::Terminate()
 	return true;
 }
 
+void Enemy::CommandAttack(IBattleReceiver* target)
+{
+
+}
+
+bool Enemy::IsExceutionAction() const
+{
+	return false;
+}
+
 // 計算処理
 bool Enemy::Process()
 {

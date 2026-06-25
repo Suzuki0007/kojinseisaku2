@@ -10,6 +10,8 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
+	void CommandAttack(IBattleReceiver* target) override;
+	bool IsExceutionAction() const override;
 
 protected:
 

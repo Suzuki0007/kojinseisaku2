@@ -20,6 +20,8 @@ public:
 	inline constexpr static std::array Player =
 	{
 		std::make_pair("Player"sv, "res/Player/Player.mv1"sv),
+		std::make_pair("Player2"sv, "res/Player/Player.mv1"sv),
+		std::make_pair("Player3"sv, "res/Player/Player.mv1"sv),
 	};
 
 	inline constexpr static std::array Map =

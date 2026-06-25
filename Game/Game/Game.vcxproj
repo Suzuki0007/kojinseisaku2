@@ -24,11 +24,12 @@
     <ClInclude Include="source\applicationmain.h" />
     <ClInclude Include="source\attackaction.h" />
     <ClInclude Include="source\battleaction.h" />
+    <ClInclude Include="source\battlecommandmenu.h" />
     <ClInclude Include="source\battlereceiver.h" />
     <ClInclude Include="source\battlescene.h" />
+    <ClInclude Include="source\battlestate.h" />
     <ClInclude Include="source\camera.h" />
     <ClInclude Include="source\charabase.h" />
-    <ClInclude Include="source\charastate.h" />
     <ClInclude Include="source\cube.h" />
     <ClInclude Include="source\deadcomponent.h" />
     <ClInclude Include="source\deadstate.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="source\lua_cmd.h" />
     <ClInclude Include="source\map.h" />
     <ClInclude Include="source\mapbase.h" />
+    <ClInclude Include="source\maprendercomponent.h" />
     <ClInclude Include="source\menuitembase.h" />
     <ClInclude Include="source\modeeffekseer.h" />
     <ClInclude Include="source\modegame.h" />
@@ -53,15 +55,19 @@
     <ClInclude Include="source\objectmanagerbase.h" />
     <ClInclude Include="source\pch.h" />
     <ClInclude Include="source\player.h" />
+    <ClInclude Include="source\player2.h" />
+    <ClInclude Include="source\Player3.h" />
     <ClInclude Include="source\playerbase.h" />
     <ClInclude Include="source\playerfactory.h" />
     <ClInclude Include="source\PlayerManager.h" />
-    <ClInclude Include="source\resourcpath.h" />
+    <ClInclude Include="source\resourcepath.h" />
     <ClInclude Include="source\scenebase.h" />
     <ClInclude Include="source\scenefactory.h" />
     <ClInclude Include="source\shadowmapcomponent.h" />
     <ClInclude Include="source\skyspherecomponent.h" />
+    <ClInclude Include="source\statemanager.h" />
     <ClInclude Include="source\tolua_cmd\luaglue_cmd.h" />
+    <ClInclude Include="source\waitstate.h" />
     <ClInclude Include="source\worldscene.h" />
   </ItemGroup>
   <ItemGroup>
@@ -69,10 +75,10 @@
     <ClCompile Include="source\applicationglobal.cpp" />
     <ClCompile Include="source\applicationmain.cpp" />
     <ClCompile Include="source\attackaction.cpp" />
+    <ClCompile Include="source\battlecommandmenu.cpp" />
     <ClCompile Include="source\battlescene.cpp" />
     <ClCompile Include="source\camera.cpp" />
     <ClCompile Include="source\charabase.cpp" />
-    <ClCompile Include="source\charastate.cpp" />
     <ClCompile Include="source\cube.cpp" />
     <ClCompile Include="source\deadstate.cpp" />
     <ClCompile Include="source\enemy.cpp" />
@@ -86,6 +92,7 @@
     <ClCompile Include="source\lua_cmd.cpp" />
     <ClCompile Include="source\map.cpp" />
     <ClCompile Include="source\mapbase.cpp" />
+    <ClCompile Include="source\maprendercomponent.cpp" />
     <ClCompile Include="source\menuitembase.cpp" />
     <ClCompile Include="source\modeeffekseer.cpp" />
     <ClCompile Include="source\modegame.cpp" />
@@ -100,15 +107,19 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\player.cpp" />
+    <ClCompile Include="source\player2.cpp" />
+    <ClCompile Include="source\Player3.cpp" />
     <ClCompile Include="source\playerbase.cpp" />
     <ClCompile Include="source\playerfactory.cpp" />
     <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\scenefactory.cpp" />
     <ClCompile Include="source\shadowmapcomponent.cpp" />
     <ClCompile Include="source\skyspherecomponent.cpp" />
+    <ClCompile Include="source\statemanager.cpp" />
     <ClCompile Include="source\tolua_cmd\luaglue_cmd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="source\waitstate.cpp" />
     <ClCompile Include="source\worldscene.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

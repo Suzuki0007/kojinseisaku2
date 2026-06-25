@@ -10,6 +10,7 @@ public:
 	virtual ~Component() = default;
 
 	virtual bool Initialize() { return true; }
+	virtual bool Terminate() { return true; }
 	virtual bool Process() { return true; }
 	virtual bool Render() { return true; }
 

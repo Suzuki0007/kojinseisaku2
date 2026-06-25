@@ -38,7 +38,6 @@ bool Map::Initialize()
 		_frame_map_collision = -1;
 
 		_ground_handle = LoadGraph("res/Texture/Groundplants1_D.jpg");
-		// 以降の初期化（省略せず元の処理を入れてください）
 		_half_polygon_size = GROUND_POLYGON_SIZE * 0.5f;
 		_start_x = -_half_polygon_size * static_cast<float>(GROUND_X);
 		_start_z = -_half_polygon_size * static_cast<float>(GROUND_Z);

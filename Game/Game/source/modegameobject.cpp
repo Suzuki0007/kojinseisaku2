@@ -24,7 +24,13 @@ bool ModeGame::ObjectInitialize()
 	auto* pm = PlayerManager::GetInstance();
 	pm->RegisterType();
 	pm->CreatePlayer("Player");
-	_chara.emplace_back(pm->GetPlayer().get());
+	pm->CreatePlayer("Player2");
+	pm->CreatePlayer("Player3");
+	for(auto& player : pm->GetPlayer())
+	{
+		player->Initialize();
+		_chara.emplace_back(player.get());
+	}
 
 	// 敵初期化
 	auto* em = EnemyManager::GetInstance();

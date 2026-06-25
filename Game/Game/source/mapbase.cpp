@@ -28,7 +28,7 @@ bool MapBase::Render()
 {
 	base::Render();
 
-	auto* shadowCom = GetComponent<ShadowMapComponent>();
+	//auto* shadowCom = GetComponent<ShadowMapComponent>();
 
 	return true;
 }

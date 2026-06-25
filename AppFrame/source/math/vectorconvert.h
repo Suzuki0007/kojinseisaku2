@@ -4,12 +4,13 @@
 
 namespace VC
 {
-	// static はすべて不要になります
+	// Vec4からDxLibのVECTOR型の変換関数
 	inline VECTOR VecToDxLib(Vec4 v1)
 	{
 		return VGet(v1.x, v1.y, v1.z);
 	}
 
+	// DxLibのVECTOR型からVec4への変換関数
 	inline Vec4 DxLibToVec(VECTOR v1)
 	{
 		return Vec4(v1.x, v1.y, v1.z, 0.0f);

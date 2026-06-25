@@ -11,7 +11,7 @@ public:
 
 	void RegisterType();
 	void CreatePlayer(const std::string& type);
-	std::unique_ptr<PlayerBase>& GetPlayer() { return GetOwner(); }
+	const std::vector<std::unique_ptr<PlayerBase>>& GetPlayer() { return GetAll(); }
 
 private:
 	PlayerManager() = default;

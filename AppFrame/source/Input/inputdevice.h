@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // 入力デバイスの抽象クラス
 enum class InputButton
@@ -12,6 +12,8 @@ enum class InputButton
 	CommandDown,
 	CommandLeft,
 	CommandRight,
+
+	Decide,
 
 	SceneDebug,
 

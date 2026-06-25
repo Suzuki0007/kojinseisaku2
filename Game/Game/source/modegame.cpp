@@ -190,7 +190,7 @@ bool ModeGame::Terminate()
 
 PlayerBase* ModeGame::GetPlayer() const
 {
-	return PlayerManager::GetInstance()->GetPlayer().get();
+	return PlayerManager::GetInstance()->GetPlayer().front().get();
 }
 
 std::vector<std::unique_ptr<EnemyBase>>& ModeGame::GetEnemies()

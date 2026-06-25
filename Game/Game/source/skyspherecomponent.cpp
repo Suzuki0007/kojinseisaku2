@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "resourcpath.h"
+#include "resourcepath.h"
 #include "skyspherecomponent.h"
 
 bool SkySphereComponent::Initialize()

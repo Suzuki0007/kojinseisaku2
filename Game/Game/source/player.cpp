@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "player.h"
-#include "resourcpath.h"
+#include "resourcepath.h"
+#include "statemanager.h"
 
 // プレイヤーの移動
 bool Player::PlayerMove(Vec4 v)
@@ -125,6 +126,9 @@ bool Player::IsExceutionAction() const
 // 計算処理
 bool Player::Process()
 {
+	auto* state = _comOwner.AddComponent<StateManager>();
+	
+
 	base::Process();
 	int key = ApplicationBase::GetInstance()->GetKey();
 	int trg = ApplicationBase::GetInstance()->GetTrg();
