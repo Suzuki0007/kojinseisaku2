@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\alivestate.h" />
+    <ClInclude Include="source\animationcomponent.h" />
     <ClInclude Include="source\applicationglobal.h" />
     <ClInclude Include="source\applicationmain.h" />
     <ClInclude Include="source\attackaction.h" />
@@ -72,6 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\alivestate.cpp" />
+    <ClCompile Include="source\animationcomponent.cpp" />
     <ClCompile Include="source\applicationglobal.cpp" />
     <ClCompile Include="source\applicationmain.cpp" />
     <ClCompile Include="source\attackaction.cpp" />

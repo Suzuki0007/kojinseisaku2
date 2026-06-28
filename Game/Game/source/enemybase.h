@@ -11,8 +11,6 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
-
-
 protected:
 
 };

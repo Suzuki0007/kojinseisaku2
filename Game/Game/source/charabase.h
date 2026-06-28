@@ -2,6 +2,7 @@
 #include "objectbase.h"
 #include "camera.h"
 #include "battlereceiver.h"
+#include "animationcomponent.h"
 #include "pch.h"
 
 class CharaBase : public ObjectBase, public IComponentBindable<CharaBase>, public IBattleReceiver
@@ -19,7 +20,7 @@ public:
 		LANDING,
 		DASHING,
 		ROLLING,
-		_EOT_
+		COUNT
 	};
 	STATUS _status;
 
@@ -73,6 +74,8 @@ public:
 		return true;
 	}
 
+	void AnimationRender(int handle, const Vec4& pos, const Vec4& dir);
+
 	void SetOnAnimEndCallback(std::move_only_function<void()>&& callback)
 	{
 		_onAnimEnd = std::move(callback);
@@ -110,6 +113,7 @@ protected:
 
 	std::move_only_function<void()> _onAnimEnd{ nullptr }; // アニメーション終了時のコールバック関数
 
+	AnimationComponent* _anim;
 	ComponentOwner<CharaBase> _comOwner; // コンポーネント
 };
 

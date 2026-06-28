@@ -21,7 +21,7 @@ bool AnimationManager::Terminate()
 	return true;
 }
 
-int AnimationManager::Play(int handle, const std::string& name, bool loop, float speed)
+int AnimationManager::Play(int handle, const std::string_view& name, bool loop, float speed)
 {
 	if(handle == -1)
 	{
@@ -29,7 +29,7 @@ int AnimationManager::Play(int handle, const std::string& name, bool loop, float
 	}
 
 	// アニメーションインデックス取得
-	int animIdx = MV1GetAnimIndex(handle, name.c_str());
+	int animIdx = MV1GetAnimIndex(handle, name.data());
 	if(animIdx == -1)
 	{
 		return -1;
@@ -206,7 +206,7 @@ bool AnimationManager::IsPlaying(int id) const
 	return it->second.playing;
 }
 
-int AnimationManager::CreateInstance(int handle, int attachindex, const std::string& name,float totaltime, bool loop, float speed)
+int AnimationManager::CreateInstance(int handle, int attachindex, const std::string_view& name, float totaltime, bool loop, float speed)
 {
 	Instance instance;
 	instance.id = _nextId++;

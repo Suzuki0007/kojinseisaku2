@@ -38,7 +38,9 @@ public:
 
 	bool Attack();
 
-
+	Vec4 MoveVector(int key);
+	void CheckActionInput(int trg, const Vec4& v);
+	void ExcecuteMovement(const Vec4& v, CharaBase::STATUS oldStatus);
 
 protected:
 	Camera* _cam;

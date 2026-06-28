@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="source\animation\animationclip.h" />
     <ClInclude Include="source\appframe.h" />
     <ClInclude Include="source\Application\applicationbase.h" />
     <ClInclude Include="source\Application\utilmacro.h" />
@@ -226,6 +227,7 @@
     <ClInclude Include="source\state\statemachine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\animation\animationclip.cpp" />
     <ClCompile Include="source\Application\applicationbase.cpp" />
     <ClCompile Include="source\Application\winmain.cpp" />
     <ClCompile Include="source\CFile\CFile.cpp" />

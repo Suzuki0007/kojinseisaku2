@@ -16,6 +16,21 @@ bool Player2::Initialize()
 	_collision_r = 30.0f;
 	_collision_weight = 10.0f;
 	_hp = 100;
+
+	_anim = AddComponent<AnimationComponent>();
+	_anim->SetAnimation(
+		{
+			AnimationClip("mot_attack_charge_loop"),	// NONE
+			AnimationClip("mot_attack_charge_loop"),	// WAIT
+			AnimationClip("mot_move_run"),				// WALK
+			AnimationClip("mot_move_jump_f_start", false),	// JUMP
+			AnimationClip("mot_move_jump_f_downloop"),	// FALL
+			AnimationClip("mot_attack_nomal", false, 2.0f),		// ATTACK
+			AnimationClip("mot_move_land", false),	// LANDING
+			AnimationClip("mot_attack_charge_step", false),	// DASHING
+			AnimationClip("mot_move_jump_f_uploop", false),	// ROLLING
+		});
+
 	return true;
 }
 
@@ -39,11 +54,20 @@ bool Player2::IsExceutionAction() const
 bool Player2::Process()
 {
 	base::Process();
+
+	CharaBase::STATUS oldStatus = _status;
+
+	float deltaTime = 1.0f / 60.0f; // デルタタイム
+	UpdateComponent(deltaTime);
+
 	return true;
 }
 
 bool Player2::Render()
 {
 	base::Render();
+
+	AnimationRender(_handle, _pos, _dir);
+
 	return true;
 }

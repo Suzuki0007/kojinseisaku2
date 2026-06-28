@@ -16,3 +16,8 @@ bool ShadowMapComponent::Process()
 
 	return true;
 }
+
+bool ShadowMapComponent::Render()
+{
+	return true;
+}

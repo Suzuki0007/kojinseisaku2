@@ -24,6 +24,22 @@ public:
 		return ref;
 	}
 
+	void Initialize()
+	{
+		for(auto& component : _component)
+		{
+			component->Initialize(); // 各コンポーネントのInitialize関数を呼び出す
+		}
+	}
+
+	void Terminate()
+	{
+		for(auto& component : _component)
+		{
+			component->Terminate(); // 各コンポーネントのTerminate関数を呼び出す
+		}
+	}
+
 	void Update(float deltaTime)
 	{
 		for(auto& component : _component)

@@ -16,12 +16,8 @@ bool Player::Initialize()
 {
 	if(!base::Initialize()) { return false; }
 	_handle = Load::LoadModel(path::Player("Player"));
-	_attach_index = -1;
 	// ステータスを「無し」に設定
 	_status = STATUS::NONE;
-	// 再生時間の初期化
-	_total_time = 0.0f;
-	_play_time = 0.0f;
 	// 位置、向きの初期化
 	_pos = v::VGet(0.0f, 0.0f, 0.0f); // 初期位置が同じだが、押し出され処理のおかげで位置がずれる
 	_dir = v::VGet(0.0f, 0.0f, -1.0f);// キャラモデルはデフォルトで-Z方向を向いている
@@ -54,6 +50,20 @@ bool Player::Initialize()
 	_air_control = 1.0f;
 
 	_air_attack_used = false;	// 空中攻撃フラグ初期化
+
+	_anim = AddComponent<AnimationComponent>();
+	_anim->SetAnimation(
+		{
+			AnimationClip("mot_attack_charge_loop"),	// NONE
+			AnimationClip("mot_attack_charge_loop"),	// WAIT
+			AnimationClip("mot_move_run"),				// WALK
+			AnimationClip("mot_move_jump_f_start", false),	// JUMP
+			AnimationClip("mot_move_jump_f_downloop"),	// FALL
+			AnimationClip("mot_attack_nomal", false, 2.0f),		// ATTACK
+			AnimationClip("mot_move_land", false),	// LANDING
+			AnimationClip("mot_attack_charge_step", false),	// DASHING
+			AnimationClip("mot_move_jump_f_uploop", false),	// ROLLING
+		});
 
 	return true;
 }
@@ -123,29 +133,8 @@ bool Player::IsExceutionAction() const
 	return _status == STATUS::ATTACK;
 }
 
-// 計算処理
-bool Player::Process()
+Vec4 Player::MoveVector(int key)
 {
-	auto* state = _comOwner.AddComponent<StateManager>();
-	
-
-	base::Process();
-	int key = ApplicationBase::GetInstance()->GetKey();
-	int trg = ApplicationBase::GetInstance()->GetTrg();
-
-	InputDevice& input = InputLocator::Get();
-	input.Update();
-
-	// 処理前の位置を保存
-	_oldPos = _pos;
-
-	if(_land)
-	{
-		_gravity = 0.0f;
-	}
-
-	// 処理前のステータスを保存しておく
-	CharaBase::STATUS old_status = _status;
 	Vec4 v = v::VGet(0.0f, 0.0f, 0.0f);
 	float length = 0.0f;
 
@@ -154,39 +143,41 @@ bool Player::Process()
 	float camrad = atan2(sz, sx);
 	float rad = 0.0f;
 
-	if((key & (PAD_INPUT_7 | PAD_INPUT_8)) == 0)
+	InputDevice& input = InputLocator::Get();
+
+	if(input.IsPress(InputButton::StickDown))
 	{
-		InputDevice& input = InputLocator::Get();
-
-		if(input.IsPress(InputButton::StickDown))
-		{
-			v.x = 1;
-		}
-		if(input.IsPress(InputButton::StickUp))
-		{
-			v.x = -1;
-		}
-		if(input.IsPress(InputButton::StickLeft))
-		{
-			v.z = -1;
-		}
-		if(input.IsPress(InputButton::StickRight))
-		{
-			v.z = 1;
-		}
-
-		_input_v = v;
-
-		if(v::VSize(v) > 0.0f)
-		{
-			length = _mv_speed;
-		}
-		rad = atan2(v.z, v.x);
-		v.x = cos(rad + camrad) * length;
-		v.z = sin(rad + camrad) * length;
+		v.x = 1;
+	}
+	if(input.IsPress(InputButton::StickUp))
+	{
+		v.x = -1;
+	}
+	if(input.IsPress(InputButton::StickLeft))
+	{
+		v.z = -1;
+	}
+	if(input.IsPress(InputButton::StickRight))
+	{
+		v.z = 1;
 	}
 
-	// 移動処理
+	_input_v = v;
+
+	if(v::VSize(v) > 0.0f)
+	{
+		length = _mv_speed;
+	}
+	rad = atan2(v.z, v.x);
+	v.x = cos(rad + camrad) * length;
+	v.z = sin(rad + camrad) * length;
+
+	return v;
+}
+
+void Player::CheckActionInput(int trg, const Vec4& v)
+{
+	// ジャンプ入力
 	if(trg & PAD_INPUT_1)
 	{
 		if(_land == true)
@@ -288,8 +279,10 @@ bool Player::Process()
 			}
 		}
 	}
+}
 
-	// 攻撃中は移動・ジャンプ処理をしない
+void Player::ExcecuteMovement(const Vec4& v, CharaBase::STATUS oldStatus)
+{
 	if(_status == STATUS::ATTACK)
 	{
 		// 攻撃時の前進（省略せず既存処理）
@@ -368,7 +361,7 @@ bool Player::Process()
 				_pos.x += v.x * _air_control;
 				_pos.z += v.z * _air_control;
 				// 軸ロック中は向きを固定
-                _dir = v;
+				_dir = v;
 			}
 		}
 	}
@@ -397,7 +390,7 @@ bool Player::Process()
 			// 地上移動（v はワールド移動量）
 			if(v::VSize(v) > 0.0f && _status != STATUS::ATTACK)
 			{
-                _dir = v;
+				_dir = v;
 
 				_status = STATUS::WALK;
 				PlayerMove(v);
@@ -405,126 +398,48 @@ bool Player::Process()
 			else
 			{
 				_status = STATUS::WAIT;
-				if(old_status == STATUS::FALL || old_status == STATUS::LANDING)
+				if(oldStatus == STATUS::FALL || oldStatus == STATUS::LANDING)
 				{
 					_status = STATUS::LANDING;
 				}
 			}
 		}
-
 	}
+}
 
-	// アニメーション時間・アタッチ管理（既存処理そのまま）
-	if(old_status == _status)
+// 計算処理
+bool Player::Process()
+{
+	base::Process();
+	int key = ApplicationBase::GetInstance()->GetKey();
+	int trg = ApplicationBase::GetInstance()->GetTrg();
+
+	InputDevice& input = InputLocator::Get();
+	input.Update();
+
+	// 処理前の位置を保存
+	_oldPos = _pos;
+
+	if(_land)
 	{
-		float anim_speed = 0.5f;
-		if(_status == STATUS::ATTACK)
-		{
-			anim_speed = 2.0f;
-		}
-		_play_time += anim_speed;
-		switch(_status)
-		{
-		case STATUS::WAIT:
-		{
-			_play_time += (float)(rand() % 10) / 100.0f;
-			break;
-		}
-		}
+		_gravity = 0.0f;
 	}
-	else
-	{
-		if(_attach_index != -1)
-		{
-			MV1DetachAnim(_handle, _attach_index);
-			_attach_index = -1;
-		}
-		switch(_status)
-		{
-		case STATUS::WAIT:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_attack_charge_loop"), -1, FALSE);
-			break;
-		case STATUS::WALK:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_move_run"), -1, FALSE);
-			break;
-		case STATUS::JUMP:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_move_jump_f_start"), -1, FALSE);
-			break;
-		case STATUS::FALL:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_move_jump_f_downloop"), -1, FALSE);
-			break;
-		case STATUS::LANDING:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_move_land"), -1, FALSE);
-			break;
-		case STATUS::DASHING:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_attack_charge_step"), -1, FALSE);
-			break;
-		case STATUS::ATTACK:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_attack_nomal"), -1, FALSE);
-			break;
-		case STATUS::ROLLING:
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_move_jump_f_uploop"), -1, FALSE);
-			break;
-		}
 
-        if(_attach_index != -1)
-        {
-            _total_time = MV1GetAttachAnimTotalTime(_handle, _attach_index);
-        }
-        else
-        {
-            _total_time = 1.0f;
-        }
+	// 処理前のステータスを保存しておく
+	CharaBase::STATUS old_status = _status;
 
-		_play_time = 0.0f;
+	const Vec4& moveVector = MoveVector(key);
 
-		switch(_status)
-		{
-		case STATUS::WAIT:
-			_play_time += rand() % 30;
-			break;
-		}
-	}
-	if(_play_time >= _total_time)
-	{
-		if(_status == STATUS::LANDING)
-		{
-			_status = STATUS::WAIT;
-			if(_attach_index != -1)
-			{
-				MV1DetachAnim(_handle, _attach_index);
-				_attach_index = -1;
-			}
-			_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_attack_charge_loop"), -1, FALSE);
-			_total_time = MV1GetAttachAnimTotalTime(_handle, _attach_index);
-		}
-		else if(_status == STATUS::ATTACK)
-		{
-			if(_land)
-			{
-				_status = STATUS::WAIT;
-				if(_attach_index != -1)
-				{
-					MV1DetachAnim(_handle, _attach_index);
-					_attach_index = -1;
-				}
-				_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_attack_charge_loop"), -1, FALSE);
-				_total_time = MV1GetAttachAnimTotalTime(_handle, _attach_index);
-			}
-			else
-			{
-				_status = STATUS::FALL;
-				if(_attach_index != -1)
-				{
-					MV1DetachAnim(_handle, _attach_index);
-					_attach_index = -1;
-				}
-				_attach_index = MV1AttachAnim(_handle, MV1GetAnimIndex(_handle, "mot_move_jump_f_downloop"), -1, FALSE);
-				_total_time = MV1GetAttachAnimTotalTime(_handle, _attach_index);
-			}
-		}
-		_play_time = 0.0f;
-	}
+	// 移動処理
+	CheckActionInput(trg, moveVector);
+
+	ExcecuteMovement(moveVector, old_status);
+
+
+	// アニメーション
+	float deltaTime = 1.0f / 60.0f; // デルタタイム
+	UpdateComponent(deltaTime);
+	
 	return true;
 }
 
@@ -532,20 +447,8 @@ bool Player::Process()
 bool Player::Render()
 {
     base::Render();
-    // 再生時間をセットする
-    if(_attach_index != -1)
-    {
-        MV1SetAttachAnimTime(_handle, _attach_index, _play_time);
-    }
 
-    // 位置
-    VC::MV1SetPosition(_handle, _pos);
-    // 向きからY軸回転を算出
-    Vec4 vrot = { 0.0f, 0.0f, 0.0f };
-    vrot.y = atan2(_dir.x * -1, _dir.z * -1);// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
-    VC::MV1SetRotationXYZ(_handle, vrot);
-    // 描画
-    MV1DrawModel(_handle);
+	AnimationRender(_handle, _pos, _dir);
 
     return true;
 

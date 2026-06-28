@@ -54,6 +54,18 @@ bool CharaBase::Damage(float damage)
 	return true;
 }
 
+void CharaBase::AnimationRender(int handle, const Vec4& pos, const Vec4& dir)
+{
+	// 位置
+	VC::MV1SetPosition(handle, pos);
+	// 向きからY軸回転を算出
+	Vec4 vrot = { 0.0f, 0.0f, 0.0f };
+	vrot.y = atan2(dir.x * -1, dir.z * -1);// モデルが標準でどちらを向いているかで式が変わる(これは-zを向いている場合)
+	VC::MV1SetRotationXYZ(handle, vrot);
+	// 描画
+	MV1DrawModel(handle);
+}
+
 // 描画処理
 bool CharaBase::Render()
 {

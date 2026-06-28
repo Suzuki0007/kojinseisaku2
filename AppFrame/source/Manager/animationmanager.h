@@ -10,7 +10,7 @@ public:
 		int id;					// 管理用ID
 		int handle;				// アニメーションハンドル
 		int attachIndex;		// アタッチインデックス
-		std::string name;		// アニメーション名
+		std::string_view name;		// アニメーション名
 		float totalTime;		// 総再生時間
 		float playTime;			// 再生時間
 		float speed;			// 再生速度
@@ -22,7 +22,7 @@ public:
 	~AnimationManager();
 
 	// アニメーションの再生
-	int Play(int handle, const std::string& name, bool loop = true, float speed = 1.0f);
+	int Play(int handle, const std::string_view& name, bool loop = true, float speed = 1.0f);
 
 	// アニメーションを停止
 	void Stop(int id);
@@ -51,7 +51,7 @@ public:
 	float GetPlayTime(int id) const;
 private:
 
-	int CreateInstance(int handle, int attachindex, const std::string& name,float totaltime, bool loop, float speed);
+	int CreateInstance(int handle, int attachindex, const std::string_view& name, float totaltime, bool loop, float speed);
 	void DetachInstance(int id);
 
 protected:
