@@ -7,6 +7,8 @@
 #include "camera.h"
 #include "playerbase.h"
 #include "enemy.h"
+#include "lua.hpp"
+#include "lua_cmd.h"
 
 class BattleScene : public SceneBase
 {
@@ -40,5 +42,7 @@ private:
 
 	IBattleReceiver* GetPlayer();
 	IBattleReceiver* GetEnemy() const;
+
+	lua_State* L{ nullptr }; // Luaの状態を保持するメンバ変数
 };
 

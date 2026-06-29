@@ -41,6 +41,7 @@ public:
 	bool Attack();
 
 	virtual const char* GetCharaClassName() const override { return "Player1"; }
+	virtual float GetSpeed() const override { return _speed->GetSpeed(); }
 
 	Vec4 MoveVector(int key);
 	void CheckActionInput(int trg, const Vec4& v);

@@ -11,6 +11,7 @@ public:
 	virtual bool Render();
 
 	virtual const char* GetCharaClassName() const override { return "Enemy"; }
+	virtual float GetSpeed() const override { return _speed->GetSpeed(); }
 
 	void CommandAttack(IBattleReceiver* target) override;
 	bool IsExceutionAction() const override;

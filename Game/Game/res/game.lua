@@ -64,3 +64,89 @@ function DrawEnemy()
         coroutine.yield()
     end
 end
+
+ActionOrder = {} --ソートされた行動順リストを格納する配列
+CurrentAnimIndex = 1 -- 現在の攻撃アニメーション中のキャラクタ
+AnimTime = 0.0
+HasTriggerAttack = false
+
+-- 行動順を計算・スピードの降順でソートする
+function CalculateActionOrder(charaList)
+    ActionOrder = {}
+    for i, chara in ipairs(charaList) do
+        local speed = GetCharaSpeed(chara.type, chara.id)
+        table.insert(ActionOrder,{
+            type = chara.type,
+            id = chara.id,
+            speed = speed
+        })
+    end
+
+    -- スピードの大きい順にソート
+    table.sort(ActionOrder, function(a, b)
+        if a.speed == b.speed then
+            return a.id < b.id
+        end
+        return a.speed > b.speed
+    end)
+
+    CurrentAnimIndex = 1
+    AnimTime = 0.0
+    HasTriggerAttack = false
+end
+
+-- ソート順にキャラを動かす関数
+function UpdateOrderAnimation(deltaTime)
+    if #ActionOrder == 0 then return end
+
+    if CurrentAnimIndex > #ActionOrder then
+        CurrentAnimIndex = 1
+    end
+
+    local activeChara = ActionOrder[CurrentAnimIndex]
+
+    if not HasTriggerAttack then
+        SetCharaAttack(activeChara.type, activeChara.id)
+        HasTriggerAttack = true
+    end
+
+    AnimTime = AnimTime + deltaTime
+
+    if AnimTime >= 1.5 then
+        CurrentAnimIndex = CurrentAnimIndex + 1
+        AnimTime = 0.0
+        HasTriggerAttack = false
+    end
+end
+
+-- 画面に行動順リストを描画する関数
+function DrawActionOrderList(startX, startY)
+    if #ActionOrder == 0 then
+        DrawChara(startX, startY, 255, 255, 255, "行動順リスト: 空")
+        return
+    end
+
+    DrawChara(startX, startY, 255, 255, 0, "== 行動順リスト ==")
+
+    for i, chara in ipairs(ActionOrder) do
+        local charaName = GetCharaClassName(chara.type, chara.id)
+
+        if chara.type == 1 then
+            local enemyNumber = chara.id + 1
+            charaName = charaName .. tostring(enemyNumber)
+        end
+
+        local displayText = string.format("%d番手: %s (Spd:%0.1f)", i, charaName, chara.speed)
+        local currentY = startY + (i * 20)
+
+        if i == CurrentAnimIndex then
+            DrawChara(startX, currentY, 100, 255, 100, displayText .. "攻撃中")
+        else
+            if chara.type == 0 then
+                DrawChara(startX, currentY, 150, 150, 255, displayText)
+            else
+                DrawChara(startX, currentY, 255, 150, 150, displayText)
+            end
+        end
+    end
+end

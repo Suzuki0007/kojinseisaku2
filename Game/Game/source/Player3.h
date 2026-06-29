@@ -16,6 +16,7 @@ public:
 	void ChangeAnim(CharaBase::STATUS next);
 
 	virtual const char* GetCharaClassName() const override { return "Player3"; }
+	virtual float GetSpeed() const override { return _speed->GetSpeed(); }
 
 	void CommandAttack(IBattleReceiver* target) override;
 	bool IsExceutionAction() const override;

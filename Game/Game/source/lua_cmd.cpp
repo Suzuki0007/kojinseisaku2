@@ -149,7 +149,7 @@ float GetCharaSpeed(int charaType, int charaId)
 		{
 			if(p->GetCharaId() == charaId)
 			{
-				return p->GetSpeedComponent()->GetSpeed();
+				return p->GetSpeed(); // プレイヤーの速度を返す
 			}
 		}
 	}
@@ -160,7 +160,7 @@ float GetCharaSpeed(int charaType, int charaId)
 		{
 			if(enemy && enemy->GetCharaId() == charaId)
 			{
-				return enemy->GetSpeedComponent()->GetSpeed();
+				return enemy->GetSpeed();
 			}
 		}
 	}

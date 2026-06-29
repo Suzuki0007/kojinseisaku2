@@ -100,6 +100,8 @@ public:
 
 	int GetCharaId() const { return _charaId; }
 	void SetCharaId(int id) { _charaId = id; }
+	virtual float GetSpeed() const = 0;
+
 
 protected:
 	int _attach_index;

@@ -197,6 +197,12 @@ void BattleScene::CreateBattleMembers()
 		enemy->SetDir(v::VGet(0.0f, 0.0f, 1.0f));
 		_battleEnemies.emplace_back(std::move(enemy));
 	}
+
+	if(L)
+	{
+		lua_getglobal(L, "CalculateActionOrder");
+		lua_newtable(L);
+	}
 }
 
 void BattleScene::UpdateBattleMembers()
