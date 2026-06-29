@@ -13,6 +13,10 @@ public:
 	bool Process() override;
 	bool Render() override;
 
+	void ChangeAnim(CharaBase::STATUS next);
+
+	virtual const char* GetCharaClassName() const override { return "Player3"; }
+
 	void CommandAttack(IBattleReceiver* target) override;
 	bool IsExceutionAction() const override;
 };

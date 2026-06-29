@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "charabase.h"
+#include "animationcomponent.h"
 
 class PlayerBase : public CharaBase
 {
@@ -14,7 +15,9 @@ public:
 	float GetMoveSpeed() const { return _mv_speed; }
 	std::vector<mymath::ATTACKCOLLISION>& GetAttackCollisionList() { return _attack_collision; }
 
+
 protected:
+
 	float _mv_speed;
 	Vec4 _input_v;
 	std::vector<mymath::ATTACKCOLLISION> _attack_collision; // 攻撃用カプセル当たり判定リスト

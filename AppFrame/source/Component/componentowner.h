@@ -21,7 +21,8 @@ public:
 		auto component = std::make_unique<T>(owner, std::forward<Args>(args)...);
 		auto& ref = *component; // 追加するコンポーネントの参照を取得
 		_component.emplace_back(std::move(component)); // コンポーネントをベクターに追加
-		return ref;
+		printf("AddComponent owner = %p\n", &owner);
+		return &ref;
 	}
 
 	void Initialize()
@@ -46,6 +47,7 @@ public:
 		{
 			component->Update(deltaTime); // 各コンポーネントのUpdate関数を呼び出す
 		}
+		printf("Update owner = %p\n", this);
 	}
 
 	void Render()

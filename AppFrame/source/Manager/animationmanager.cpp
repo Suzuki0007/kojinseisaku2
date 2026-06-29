@@ -105,7 +105,6 @@ void AnimationManager::Update(float time)
 	for(auto it = _animInstance.begin(); it != _animInstance.end();)
 	{
 		Instance& instance = it->second;
-		// 再生中でなければスキップ
 		if(!instance.playing)
 		{
 			++it;
@@ -114,29 +113,27 @@ void AnimationManager::Update(float time)
 
 		instance.playTime += time * instance.speed;
 
-		// 再生時間が総再生時間を超えたら
 		if(instance.totalTime > 0.0f && instance.playTime >= instance.totalTime)
 		{
-			// ループ再生なら再生時間を調整
 			if(instance.loop)
 			{
-				instance.playTime = std::fmod(instance.playTime, instance.totalTime); // ループ再生(std::fmodで余りを取得)
+				instance.playTime = std::fmod(instance.playTime, instance.totalTime);
 				if(instance.playTime < 0.0f)
 				{
-					instance.playing = 0.0f;
+					instance.playTime += instance.totalTime; // ⭕ 修正：playing への誤代入を直す
 				}
 			}
 			else
 			{
-				// 再生終了
+				// 最終フレームで再生停止(キープ)させる
+				instance.playTime = instance.totalTime;
+				instance.playing = false; // 再生フラグをオフにして停止させる
 				MV1SetAttachAnimTime(instance.handle, instance.attachIndex, instance.totalTime);
-				MV1DetachAnim(instance.handle, instance.attachIndex);
-				it = _animInstance.erase(it);
+				++it;
 				continue;
 			}
 		}
 
-		// 再生時間設定
 		MV1SetAttachAnimTime(instance.handle, instance.attachIndex, instance.playTime);
 		++it;
 	}

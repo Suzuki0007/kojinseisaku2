@@ -28,7 +28,7 @@ private:
 	BattleCommandMenu _commandMenu;
 	Camera _battleCamera;
 	int _backgroundHandle{ -1 };
-	std::vector<PlayerBase*> _battlePlayers;
+	std::vector<PlayerBase*>_battlePlayers;
 	std::vector<std::unique_ptr<Enemy>> _battleEnemies;
 	std::unique_ptr<MapRenderComponent> _mapRender;;
 

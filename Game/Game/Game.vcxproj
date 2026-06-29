@@ -66,6 +66,7 @@
     <ClInclude Include="source\scenefactory.h" />
     <ClInclude Include="source\shadowmapcomponent.h" />
     <ClInclude Include="source\skyspherecomponent.h" />
+    <ClInclude Include="source\speedcomponent.h" />
     <ClInclude Include="source\statemanager.h" />
     <ClInclude Include="source\tolua_cmd\luaglue_cmd.h" />
     <ClInclude Include="source\waitstate.h" />

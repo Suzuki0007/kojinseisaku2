@@ -10,6 +10,8 @@ public:
 	virtual bool Process();
 	virtual bool Render();
 
+	virtual const char* GetCharaClassName() const override { return "Enemy"; }
+
 	void CommandAttack(IBattleReceiver* target) override;
 	bool IsExceutionAction() const override;
 

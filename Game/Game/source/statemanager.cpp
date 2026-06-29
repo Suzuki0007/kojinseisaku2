@@ -25,7 +25,7 @@ bool StateManager::Process()
 
 	_stateMachine.Execute([this](auto& state)
 		{
-			state.Update(&_owner);
+			state.Update(_owner);
 		});
 	return true;
 }

@@ -24,6 +24,9 @@ bool Enemy::Initialize()
 
 	_hp = 20;
 
+	_battleSpeed = 12.0f;
+	_speed->SetSpeed(_battleSpeed);
+
     // 初期アタッチは行わない。Process()でステータスに応じてアタッチする
 
 	return true;

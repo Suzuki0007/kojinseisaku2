@@ -2,8 +2,10 @@
 #include "objectbase.h"
 #include "camera.h"
 #include "battlereceiver.h"
-#include "animationcomponent.h"
+#include "speedcomponent.h"
 #include "pch.h"
+
+class AnimationComponent;
 
 class CharaBase : public ObjectBase, public IComponentBindable<CharaBase>, public IBattleReceiver
 {
@@ -61,8 +63,11 @@ public:
 	float GetJumpHeight() const { return _jumpHeight; }
 	void SetJumpHeight(float h) { _jumpHeight = h; }
 
-	void SetJumpCount(bool v) { _jumpCount = v; }
 	bool GetJumpCount() const { return _jumpCount; }
+	void SetJumpCount(bool v) { _jumpCount = v; }
+
+	auto GetCanControl() const { return _canControl; }
+	void SetCanControl(bool v) { _canControl = v; }
 
 	// ジャンプするかどうか
 	void RequestJump(bool v) { _jumpRequest = true; }
@@ -88,7 +93,13 @@ public:
 			_onAnimEnd = nullptr;
 		}
 	}
+
 	AnimConfig& GetAnimConfig() { return _animConfig; }
+
+	virtual const char* GetCharaClassName() const = 0;
+
+	int GetCharaId() const { return _charaId; }
+	void SetCharaId(int id) { _charaId = id; }
 
 protected:
 	int _attach_index;
@@ -103,17 +114,20 @@ protected:
 
 	float _hp;// キャラの体力
 	bool _is_alive;// 生存フラグ
+	float _battleSpeed{ 0.0f };
+
+	int _charaId{ 0 }; // キャラクターID
 
 	bool _land { false };// 着地しているかどうか
 	bool _jumpRequest { false }; // ジャンプ要求フラグ
 	float _jumpHeight { 0.0f }; // ジャンプの高さ
 	float _gravity { 0.0f }; // 重力の強さ
 	bool _jumpCount { true };			// ジャンプ回数制限用フラグ
+	bool _canControl{ true }; // キャラの操作が可能かどうか
+	std::unique_ptr<SpeedComponent<CharaBase>> _speed { std::make_unique<SpeedComponent<CharaBase>>(*this) };
+
 	AnimConfig _animConfig; // アニメーション名の設定
-
-	std::move_only_function<void()> _onAnimEnd{ nullptr }; // アニメーション終了時のコールバック関数
-
 	AnimationComponent* _anim;
-	ComponentOwner<CharaBase> _comOwner; // コンポーネント
+	std::move_only_function<void()> _onAnimEnd{ nullptr }; // アニメーション終了時のコールバック関数
 };
 

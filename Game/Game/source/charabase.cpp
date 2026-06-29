@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "charabase.h"
+#include "animationcomponent.h"
 
 CharaBase::~CharaBase()
 {

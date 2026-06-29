@@ -1,5 +1,6 @@
 #pragma once
 #include "charabase.h"
+#include "pch.h"
 
 class AnimationComponent : public Component<CharaBase>
 {
@@ -11,7 +12,7 @@ public:
 	virtual ~AnimationComponent() override = default;
 	virtual bool Initialize() override;
 	virtual bool Terminate() override;
-	virtual bool Process() override;
+	virtual void Update(float deltaTime) override;
 	virtual bool Render() override;
 
 	void SetAnimation(
@@ -31,6 +32,8 @@ private:
 
 	std::optional<int> _animId;
 	Anim _currentAnim { Anim::NONE };
+	float _playTime{ 0.0f };
+	bool _loop{ true };
 
 };
 

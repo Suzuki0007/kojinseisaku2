@@ -6,7 +6,7 @@ template <typename TOwner>
 class Component
 {
 public:
-	explicit Component(TOwner& owner) : _owner(owner) {}
+	explicit Component(TOwner& owner) : _owner(&owner) {}
 	virtual ~Component() = default;
 
 	virtual bool Initialize() { return true; }
@@ -26,6 +26,6 @@ public:
 
 protected:
 	handle::ModelHandle _mHandle{ -1 };
-	TOwner& _owner;
+	TOwner* _owner;
 };
 

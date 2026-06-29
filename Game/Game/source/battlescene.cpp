@@ -57,7 +57,7 @@ void BattleScene::Initialize()
 void BattleScene::Update()
 {
 	InputDevice& input = InputLocator::Get();
-	input.Update();
+	//input.Update();
 
 	UpdateBattleMembers();
 	if(_mapRender)
@@ -70,7 +70,14 @@ void BattleScene::Update()
 		if(_observer)
 		{
 			_observer->OnChangeState(GameState::World, _targetEnemyId);
+			auto& player = PlayerManager::GetInstance()->GetPlayer();
+			for(auto& p : player)
+			{
+				p->SetCanControl(true);
+			}
 		}
+
+
 		return;
 	}
 
@@ -105,12 +112,18 @@ void BattleScene::OnCommandSelected(BattleCommandMenu::BattleCommand command)
 		if(!_actions.empty())
 		{
 			_actions.front()->Execute(GetPlayer(), GetEnemy());
+
 		}
 		break;
 	case BattleCommandMenu::BattleCommand::End:
 		if(_observer)
 		{
 			_observer->OnChangeState(GameState::World, _targetEnemyId);
+			auto& player = PlayerManager::GetInstance()->GetPlayer();
+			for(auto& p : player)
+			{
+				p->SetCanControl(true);
+			}
 		}
 		break;
 	default:
@@ -163,7 +176,7 @@ void BattleScene::CreateBattleMembers()
 
 	auto& players = PlayerManager::GetInstance()->GetPlayer();
 
-	for(int i = 0; i < 3; ++i)
+	for(int i = 0; i < 3; i++)
 	{
 		// プレイヤーの配置（万が一マネージャーに3人いなくてもエラーにならないようにif文をつける）
 		if(i < players.size())
@@ -173,6 +186,7 @@ void BattleScene::CreateBattleMembers()
 			player->SetCamera(&_battleCamera);
 			player->SetPos(playerPositions[i]);
 			player->SetDir(v::VGet(0.0f, 0.0f, -1.0f));
+			player->SetCanControl(false);
 			_battlePlayers.emplace_back(player);
 		}
 

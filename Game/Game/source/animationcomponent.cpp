@@ -38,7 +38,7 @@ void AnimationComponent::ChangeAnimation(Anim anim)
 	}
 
 	int id = AnimationManager::GetInstance()->Play(
-		_owner.GetModelHandle(),
+		_owner->GetModelHandle(),
 		clip.GetName(),
 		clip.IsLoop(),
 		clip.GetSpeed()
@@ -86,17 +86,15 @@ void AnimationComponent::SetAnimation(
 	_animation = animation;
 }
 
-bool AnimationComponent::Process()
+void AnimationComponent::Update(float deltaTime)
 {
-	auto status = _owner.GetStatus();
+	auto status = _owner->GetStatus();
 
 	if(status != _currentAnim)
 	{
 		_currentAnim = status;
 		ChangeAnimation(_currentAnim);
 	}
-
-	return true;
 }
 
 bool AnimationComponent::Render()

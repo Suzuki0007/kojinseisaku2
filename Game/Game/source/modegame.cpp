@@ -251,6 +251,15 @@ void ModeGame::ChangeState(GameState nextState, int enemyId)
 		_enemyIndexBattle = -1;
 	}
 	
+	if(nextState == GameState::World)
+	{
+		auto* player = GetPlayer();
+		if(player)
+		{
+			player->SetCamera(_camera);
+		}
+	}
+
 	_sceneBase = SceneFactory::CreateScene(nextState, enemyId);
 
 	if(_sceneBase)
@@ -274,6 +283,9 @@ bool ModeGame::IsEnemyAliveFromList(int index) const
 // 計算処理
 bool ModeGame::Process()
 {
+	float deltaTime = 1.0f; // 1フレームの時間を秒単位で計算
+	AnimationManager::GetInstance()->Update(deltaTime);
+
 	int trg = ApplicationMain::GetInstance()->GetTrg();
 	if(_is_gameover)
 	{
@@ -342,16 +354,16 @@ bool ModeGame::Process()
 			if(_final_remaining_time < 0) _final_remaining_time = remaining;
 		}
 
-		// 制限時間のカウントダウン
-		unsigned long elapsed_ms = GetModeTm();
-		int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
-		int remaining = _time_limit - elapsed_sec;
-		if(remaining <= 0)
-		{
-			_is_gameover = true;
-			ModeServer::GetInstance()->SkipProcessUnderLayer();
-			if(_final_remaining_time < 0) _final_remaining_time = 0;
-		}
+		//// 制限時間のカウントダウン
+		//unsigned long elapsed_ms = GetModeTm();
+		//int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
+		//int remaining = _time_limit - elapsed_sec;
+		//if(remaining <= 0)
+		//{
+		//	_is_gameover = true;
+		//	ModeServer::GetInstance()->SkipProcessUnderLayer();
+		//	if(_final_remaining_time < 0) _final_remaining_time = 0;
+		//}
 	}
 
 	// ---------------------------------------------------------
@@ -456,26 +468,26 @@ bool ModeGame::Render()
 
 	 SetFontSize(64);
 
-    // 残り時間表示
-    unsigned long elapsed_ms = GetModeTm();
-    int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
-    int remaining = _time_limit - elapsed_sec;
-	if(remaining < 0) { remaining = 0; }
-    // ゲームオーバー時に確定した残り時間があればそちらを表示
-    int display_time;
-    if(_final_remaining_time >= 0)
-    {
-        display_time = _final_remaining_time;
-    }
-    else
-    {
-        display_time = remaining;
-    }
+ //   // 残り時間表示
+ //   unsigned long elapsed_ms = GetModeTm();
+ //   int elapsed_sec = static_cast<int>(elapsed_ms / 1000);
+ //   int remaining = _time_limit - elapsed_sec;
+	//if(remaining < 0) { remaining = 0; }
+ //   // ゲームオーバー時に確定した残り時間があればそちらを表示
+ //   int display_time;
+ //   if(_final_remaining_time >= 0)
+ //   {
+ //       display_time = _final_remaining_time;
+ //   }
+ //   else
+ //   {
+ //       display_time = remaining;
+ //   }
 
-	if(!_is_gameover)
-	{
-		DrawFormatString(500, 10, GetColor(0, 0, 0), "Time: %d", display_time);
-	}
+	//if(!_is_gameover)
+	//{
+	//	DrawFormatString(500, 10, GetColor(0, 0, 0), "Time: %d", display_time);
+	//}
     
 	int alive_count = 0;
 	for (size_t i = 0; i < _enemyAliveList.size(); ++i)
@@ -502,17 +514,17 @@ bool ModeGame::Render()
 			defeated = 0;
 		}
 		DrawFormatString(cx + 200, cy + 100, GetColor(255, 0, 0), "敵を倒した数: %d", defeated);
-        // 残り時間も表示（時間切れなら 0）。ゲームオーバー時に確定した残り時間を使う
-        int display_final;
-        if(_final_remaining_time >= 0)
-        {
-            display_final = _final_remaining_time;
-        }
-        else
-        {
-            display_final = remaining;
-        }
-        DrawFormatString(cx + 200, cy + 200, GetColor(255, 0, 0), "残り時間: %d", display_final);
+        //// 残り時間も表示（時間切れなら 0）。ゲームオーバー時に確定した残り時間を使う
+        //int display_final;
+        //if(_final_remaining_time >= 0)
+        //{
+        //    display_final = _final_remaining_time;
+        //}
+        //else
+        //{
+        //    display_final = remaining;
+        //}
+        //DrawFormatString(cx + 200, cy + 200, GetColor(255, 0, 0), "残り時間: %d", display_final);
 		// 操作説明
 		DrawFormatString(cx + 50, cy + 300, GetColor(255, 0, 0), "キーボード:Zまだはパッド:Aでタイトルへ");
 		// フォントサイズを戻す（他描画に影響しないように）

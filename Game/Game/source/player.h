@@ -36,12 +36,16 @@ public:
 
 	bool PlayerMove(Vec4 v);
 
+	void UpdateBattle();
+
 	bool Attack();
+
+	virtual const char* GetCharaClassName() const override { return "Player1"; }
 
 	Vec4 MoveVector(int key);
 	void CheckActionInput(int trg, const Vec4& v);
 	void ExcecuteMovement(const Vec4& v, CharaBase::STATUS oldStatus);
-
+	void ChangeAnim(CharaBase::STATUS next);
 protected:
 	Camera* _cam;
 	
