@@ -18,6 +18,7 @@ bool Player2::Initialize()
 	_hp = 100;
 	_battleSpeed = 10.0f;
 	_speed->SetSpeed(_battleSpeed);
+	_charaId = 2;
 
 	//_anim = AddComponent<AnimationComponent>();
 	//_anim->SetAnimation(

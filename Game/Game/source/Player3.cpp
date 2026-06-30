@@ -23,6 +23,7 @@ bool Player3::Initialize()
 	_hp = 100;
 	_battleSpeed = 20.0f;
 	_speed->SetSpeed(_battleSpeed);
+	_charaId = 3;
 	return true;
 }
 

@@ -53,7 +53,7 @@ bool ModeTitle::Render()
 	base::Render();
 	int x = 200, y = 200, size = 64;
     SetFontSize(size);
-    DrawFormatString(350, y, GetColor(255, 255, 0), "全滅1分チャレンジ");
+    DrawFormatString(350, y, GetColor(255, 255, 0), "ルアコマンド");
     y += 64;
     // 操作説明はフォントを小さくする
     SetFontSize(size / 2);

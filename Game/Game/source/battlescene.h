@@ -10,6 +10,8 @@
 #include "lua.hpp"
 #include "lua_cmd.h"
 
+class ModeGame;
+
 class BattleScene : public SceneBase
 {
 public:
@@ -26,6 +28,7 @@ private:
 	std::vector<std::unique_ptr<BattleAction>> _actions;
 	int _targetEnemyId { -1 };
 	int _commandCursor{ 0 };
+	bool _isWorldScene{ false };
 
 	BattleCommandMenu _commandMenu;
 	Camera _battleCamera;

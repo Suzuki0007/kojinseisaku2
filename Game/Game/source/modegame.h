@@ -75,6 +75,7 @@ public:
 	std::vector<std::unique_ptr<EnemyBase>>& GetEnemies();
 
 	bool IsEnemyAliveFromList(int index) const;
+	lua_State* GetLuaState() const { return _L; }
 
 private:
 	// プレイヤーのヘルパー関数

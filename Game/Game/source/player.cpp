@@ -55,6 +55,7 @@ bool Player::Initialize()
 	_air_attack_used = false;	// 空中攻撃フラグ初期化
 	_battleSpeed = 5.0f;
 	_speed->SetSpeed(_battleSpeed);
+	_charaId = 1;
 
 	//_anim = AddComponent<AnimationComponent>();
 	//_anim->SetAnimation(
@@ -131,13 +132,13 @@ void Player::CommandAttack(IBattleReceiver* target)
 	if(_status != STATUS::ATTACK)
 	{
 		_status = STATUS::ATTACK;
-		Attack();
+		//Attack();
 	}
 }
 
 bool Player::IsExceutionAction() const
 {
-	return _status == STATUS::ATTACK;
+	return _status == STATUS::WAIT;
 }
 
 Vec4 Player::MoveVector(int key)
@@ -525,6 +526,7 @@ bool Player::Process()
 
 	// 処理前の位置を保存
 	_oldPos = _pos;
+	_oldDir = _dir;
 
 	if(_land)
 	{

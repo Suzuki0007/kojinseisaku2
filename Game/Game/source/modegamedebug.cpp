@@ -125,12 +125,13 @@ bool ModeGame::DebugRender()
 	{
 		int x = 10;
 		int y = 200;
-		int color = GetColor(0, 0, 0);
+		int color = GetColor(255, 255, 255);
 		SetFontSize(16);
 		// 表示内容：Aボタンがダッシュ、2回押しで空中ダッシュ、Bボタンが攻撃、Xボタンがドッジロール
 		DrawFormatString(x, y, color, "A: ダッシュ (2回押しで空中ダッシュ)");
 		DrawFormatString(x, y + 18, color, "B: 攻撃(ジャンプ攻撃可)");
 		DrawFormatString(x, y + 36, color, "X: ドッジロール");
+		DrawFormatString(x, y + 54, color, "敵に当たったらコマンドバトル");
 	}
 
 	return true;

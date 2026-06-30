@@ -14,7 +14,8 @@ PadInput::PadInput()
 	m_PadMap[std::to_underlying(InputButton::CommandLeft)] = 134;
 	m_PadMap[std::to_underlying(InputButton::CommandRight)] = 135;
 
-	m_PadMap[std::to_underlying(InputButton::SceneDebug)] = 0;// Aボタン
+	m_PadMap[std::to_underlying(InputButton::SceneDebug)] = 5;// RBボタン
+	m_PadMap[std::to_underlying(InputButton::Decide)] = 0;// Aボタン
 }
 
 void PadInput::Update()

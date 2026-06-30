@@ -82,7 +82,7 @@ void DrawChara(int x, int y, int r, int g, int b, const char* FormatString)
 	std::string sSJIS = Utf8Sjis::ConvUTF8toSJIS(u8msg);
 
 	// DXライブラリの関数で画面に描画
-	DrawFormatString(x, y, GetColor(r, g, b), "%s", sSJIS.c_str());
+	DrawFormatString(x, y, GetColor(r, g, b), "%s", u8msg.data());
 }
 
 const char* GetCharaClassName(int charaType, int charaId)

@@ -4,6 +4,7 @@
 #include "PlayerManager.h"
 #include "EnemyManager.h"
 #include "attackaction.h"
+#include "modegame.h"
 
 IBattleReceiver* BattleScene::GetPlayer() 
 {
@@ -81,9 +82,45 @@ void BattleScene::Update()
 		return;
 	}
 
+
+	auto* modegame = static_cast<ModeGame*>(ModeServer::GetInstance()->Get("game"));
+	if(modegame)
+	{
+		lua_State* L = modegame->GetLuaState();
+		if(L)
+		{
+			lua_getglobal(L, "UpdateOrderAnimation");
+			lua_pushnumber(L, 1.0f / 60.0f); // deltaTime (1フレーム分)
+
+			if(lua_pcall(L, 1, 0, 0) != LUA_OK)
+			{
+				_LOG(lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+		}
+	}
+
+	if(_isWorldScene)
+	{
+		if(input.IsTrigger(InputButton::Decide))
+		{
+
+			_observer->OnChangeState(GameState::World, _targetEnemyId);
+			auto& player = PlayerManager::GetInstance()->GetPlayer();
+			for(auto& p : player)
+			{
+				p->SetCanControl(true);
+				p->SetPos(p->GetOldPos());
+				p->SetDir(p->GetOldDir());
+				p->SetStatus(CharaBase::STATUS::WAIT);
+			}
+			return;
+		}
+	}
+
 	if(IsActionRunning())
 	{
-		return;
+		//return;
 	}
 
 	// コマンドメニューのカーソル移動
@@ -101,6 +138,7 @@ void BattleScene::Update()
 	{
 		OnCommandSelected(_commandMenu.GetSelectedCommand());
 	}
+
 }
 
 void BattleScene::OnCommandSelected(BattleCommandMenu::BattleCommand command)
@@ -113,17 +151,79 @@ void BattleScene::OnCommandSelected(BattleCommandMenu::BattleCommand command)
 		{
 			_actions.front()->Execute(GetPlayer(), GetEnemy());
 
+			auto* modegame = static_cast<ModeGame*>(ModeServer::GetInstance()->Get("game"));
+			if(modegame)
+			{
+				lua_State* L = modegame->GetLuaState();
+				if(L)
+				{
+					lua_getglobal(L, "CalculateActionOrder");
+					lua_newtable(L);
+
+					int listTableIdx = lua_gettop(L);
+
+					int index = 1;
+
+					for(auto& player : _battlePlayers)
+					{
+						if(!player) { continue; }
+
+						lua_pushinteger(L, index); // 大元テーブル用のキー
+						lua_newtable(L);           // 子テーブル
+						int childTableIdx = lua_gettop(L); // 子テーブルの絶対位置を記憶
+
+						// type の設定
+						lua_pushstring(L, "type");
+						lua_pushinteger(L, 0); // 0 = Player
+						lua_settable(L, childTableIdx); // 子テーブルに type を設定
+
+						// id の設定
+						lua_pushstring(L, "id");
+						lua_pushinteger(L, player->GetCharaId());
+						lua_settable(L, childTableIdx);
+
+						// 大元テーブル（listTableIdx）に、キー（index）と子テーブルを紐付け
+						lua_settable(L, listTableIdx);
+						index++;
+					}
+
+					for(auto& enemy : _battleEnemies)
+					{
+						if(!enemy) continue; // 安全対策
+
+						lua_pushinteger(L, index); // 大元テーブル用のキー
+						lua_newtable(L);           // 子テーブル
+						int childTableIdx = lua_gettop(L);
+
+						// type の設定
+						lua_pushstring(L, "type");
+						lua_pushinteger(L, 1); // 1 = Enemy
+						lua_settable(L, childTableIdx);
+
+						// id の設定
+						lua_pushstring(L, "id");
+						lua_pushinteger(L, enemy->GetCharaId());
+						lua_settable(L, childTableIdx);
+
+						// 大元テーブルに紐付け
+						lua_settable(L, listTableIdx);
+						index++;
+					}
+
+					if(lua_pcall(L, 1, 0, 0) != LUA_OK)
+					{
+						_LOG(lua_tostring(L, -1));
+						lua_pop(L, 1);
+					}
+				}
+			}
+
 		}
 		break;
 	case BattleCommandMenu::BattleCommand::End:
 		if(_observer)
 		{
 			_observer->OnChangeState(GameState::World, _targetEnemyId);
-			auto& player = PlayerManager::GetInstance()->GetPlayer();
-			for(auto& p : player)
-			{
-				p->SetCanControl(true);
-			}
 		}
 		break;
 	default:
@@ -150,10 +250,47 @@ void BattleScene::Render()
 	SetFontSize(32);
 	DrawFormatString(80, 60, GetColor(255, 255, 255), "コマンドバトル");
 	DrawFormatString(80, 105, GetColor(255, 255, 255), "敵（No.%d）に遭遇した！", _targetEnemyId);
-
+	DrawFormatString(80, 150, GetColor(255, 255, 255), "Aで決定、十字キーでカーソル移動");
 	// コマンド選択メニューを描画
 	_commandMenu.Render(80, 540, 42);
 	SetFontSize(16);
+
+	auto* modegame = static_cast<ModeGame*>(ModeServer::GetInstance()->Get("game"));
+	if(modegame)
+	{
+		lua_State* L = modegame->GetLuaState();
+		if(L)
+		{
+			lua_getglobal(L, "DrawActionOrderList");
+			lua_pushinteger(L, 300); // 表示位置 X (他のUIと被らないように右にずらしました)
+			lua_pushinteger(L, 150); // 表示位置 Y
+
+			if(lua_pcall(L, 2, 0, 0) != LUA_OK)
+			{
+				_LOG(lua_tostring(L, -1));
+				lua_pop(L, 1);
+			}
+		}
+	}
+
+	if(modegame)
+	{
+		lua_State* L = modegame->GetLuaState();
+
+		lua_getglobal(L, "IsActionOrderFinished");
+		if(lua_pcall(L, 0, 1, 0) == LUA_OK)
+		{
+			bool finished = lua_toboolean(L, -1);
+			lua_pop(L, 1);
+
+			if(finished)
+			{
+				DrawFormatString(80, 300, GetColor(255, 255, 0), "アクションが終了しました。AボタンでWorldに戻る");
+				_isWorldScene = true;
+				return;
+			}
+		}
+	}
 }
 
 void BattleScene::CreateBattleMembers()
@@ -198,11 +335,7 @@ void BattleScene::CreateBattleMembers()
 		_battleEnemies.emplace_back(std::move(enemy));
 	}
 
-	if(L)
-	{
-		lua_getglobal(L, "CalculateActionOrder");
-		lua_newtable(L);
-	}
+
 }
 
 void BattleScene::UpdateBattleMembers()

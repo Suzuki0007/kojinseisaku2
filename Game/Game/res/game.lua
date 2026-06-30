@@ -69,6 +69,7 @@ ActionOrder = {} --ソートされた行動順リストを格納する配列
 CurrentAnimIndex = 1 -- 現在の攻撃アニメーション中のキャラクタ
 AnimTime = 0.0
 HasTriggerAttack = false
+OrderFinished = false
 
 -- 行動順を計算・スピードの降順でソートする
 function CalculateActionOrder(charaList)
@@ -93,15 +94,16 @@ function CalculateActionOrder(charaList)
     CurrentAnimIndex = 1
     AnimTime = 0.0
     HasTriggerAttack = false
+    OrderFinished = false
+
+            -- 1フレーム描画したら必ず一時中断してC++に制御を戻す
+        coroutine.yield()
 end
 
 -- ソート順にキャラを動かす関数
 function UpdateOrderAnimation(deltaTime)
     if #ActionOrder == 0 then return end
-
-    if CurrentAnimIndex > #ActionOrder then
-        CurrentAnimIndex = 1
-    end
+    if OrderFinished then return end
 
     local activeChara = ActionOrder[CurrentAnimIndex]
 
@@ -116,17 +118,27 @@ function UpdateOrderAnimation(deltaTime)
         CurrentAnimIndex = CurrentAnimIndex + 1
         AnimTime = 0.0
         HasTriggerAttack = false
+
+        if CurrentAnimIndex > #ActionOrder then
+            OrderFinished = true
+        end
     end
+
+    coroutine.yield()
 end
 
 -- 画面に行動順リストを描画する関数
 function DrawActionOrderList(startX, startY)
     if #ActionOrder == 0 then
-        DrawChara(startX, startY, 255, 255, 255, "行動順リスト: 空")
+        DrawChara(startX, startY, 255, 255, 255, "Action Order List: Empty")
+        return
+    end
+    if OrderFinished then
+        DrawChara(startX, startY, 100, 255, 100, "Action Finished")
         return
     end
 
-    DrawChara(startX, startY, 255, 255, 0, "== 行動順リスト ==")
+    DrawChara(startX, startY, 255, 255, 0, "== List ==")
 
     for i, chara in ipairs(ActionOrder) do
         local charaName = GetCharaClassName(chara.type, chara.id)
@@ -136,11 +148,11 @@ function DrawActionOrderList(startX, startY)
             charaName = charaName .. tostring(enemyNumber)
         end
 
-        local displayText = string.format("%d番手: %s (Spd:%0.1f)", i, charaName, chara.speed)
+        local displayText = string.format("%d: %s (Spd:%0.1f)", i, charaName, chara.speed)
         local currentY = startY + (i * 20)
 
         if i == CurrentAnimIndex then
-            DrawChara(startX, currentY, 100, 255, 100, displayText .. "攻撃中")
+            DrawChara(startX, currentY, 100, 255, 100, displayText .. "Attacking")
         else
             if chara.type == 0 then
                 DrawChara(startX, currentY, 150, 150, 255, displayText)
@@ -149,4 +161,11 @@ function DrawActionOrderList(startX, startY)
             end
         end
     end
+
+            -- 1フレーム描画したら必ず一時中断してC++に制御を戻す
+        coroutine.yield()
+end
+
+function IsActionOrderFinished()
+    return OrderFinished == true
 end
