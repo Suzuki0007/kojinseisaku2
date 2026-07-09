@@ -2,6 +2,7 @@
 #include "player.h"
 #include "resourcepath.h"
 #include "statemanager.h"
+#include "jumpcomponet.h"
 
 // プレイヤーの移動
 bool Player::PlayerMove(Vec4 v)
@@ -31,10 +32,6 @@ bool Player::Initialize()
 	_collision_weight = 20.0f;
 	_cam = nullptr;
 	_mv_speed = 6.0f;
-	// ジャンプ、重力関連初期化
-	_land = true;
-	_jumpHeight = 20;
-	_gravity = 0.0f;
 	// ダッシュ関連初期化
 	_is_dashing = false;
 	_dash_speed = 20.0f;
@@ -49,7 +46,6 @@ bool Player::Initialize()
 	_roll_timer = 0.0f;						// ドッジロール残り時間
 	_roll_direction = v::VGet(0.0f, 0.0f, 0.0f);	// ドッジロール方向
 
-	_jumpCount = true;
 	_air_control = 1.0f;
 
 	_air_attack_used = false;	// 空中攻撃フラグ初期化
@@ -188,14 +184,10 @@ void Player::CheckActionInput(int trg, const Vec4& v)
 	// ジャンプ入力
 	if(trg & PAD_INPUT_1)
 	{
-		if(_land == true)
+		if(_jump->IsGround())
 		{
 			// ジャンプ
-			_jumpCount = false;
-			_gravity = _jumpHeight;
-			_pos.y += _gravity;
-			_status = STATUS::JUMP;
-			_land = false;
+			_jump->RequestJump();
 		}
 		else
 		{
@@ -236,7 +228,7 @@ void Player::CheckActionInput(int trg, const Vec4& v)
 	}
 
 	// ドッジロール
-	if(_land == true && (trg & PAD_INPUT_3) && !_is_rolling && !_is_dashing)
+	if(_jump->IsGround() && (trg & PAD_INPUT_3) && !_is_rolling && !_is_dashing)
 	{
 		_is_rolling = true;
 		_roll_timer = _roll_time;
@@ -273,7 +265,7 @@ void Player::CheckActionInput(int trg, const Vec4& v)
 		if(_status != STATUS::ATTACK)
 		{
 			// 地上にいる場合は常に攻撃可能
-			if(_land)
+			if(_jump->IsGround())
 			{
 				_status = STATUS::ATTACK;
 				Attack();
@@ -297,7 +289,7 @@ void Player::ExcecuteMovement(const Vec4& v, CharaBase::STATUS oldStatus)
 		if(_play_time < _total_time * 0.5f)
 		{
 			float attack_move_speed;
-			if(_land)
+			if(_jump->IsGround())
 			{
 				attack_move_speed = 5.0f;
 			}
@@ -311,36 +303,24 @@ void Player::ExcecuteMovement(const Vec4& v, CharaBase::STATUS oldStatus)
 		}
 
 		// 空中で攻撃している場合は重力を適用
-		if(!_land)
+		if(!_jump->IsGround())
 		{
-			_gravity -= 0.5f;
-			_pos.y += _gravity;
+			_pos.y += _jump->GetCurrentGravity();
 
 			if(_pos.y <= 0.0f)
 			{
 				_pos.y = 0.0f;
-				_land = true;
-				_gravity = 0.0f;
-				_jumpCount = true;
+				_jump->SetGround(true);
 				_air_attack_used = false;
 			}
 		}
 	}
-	else if(_land == false)
+	else if(_jump->IsJumping())
 	{
-		// 重力処理
-		_gravity -= 0.98f;
-		_pos.y += _gravity;
-		if(_gravity < 0.0f)
-		{
-			_status = STATUS::FALL;
-		}
 		if(_pos.y <= 0.0f)
 		{
 			_pos.y = 0.0f;
-			_land = true;
-			_gravity = 0.0f;
-			_jumpCount = true;
+			_jump->SetGround(true);
 			_is_dashing = false;
 			_dash_timer = 0.0f;
 			_air_attack_used = false;
@@ -528,10 +508,7 @@ bool Player::Process()
 	_oldPos = _pos;
 	_oldDir = _dir;
 
-	if(_land)
-	{
-		_gravity = 0.0f;
-	}
+	_jump->Update(1.0f);
 
 	// 処理前のステータスを保存しておく
 	CharaBase::STATUS old_status = _status;

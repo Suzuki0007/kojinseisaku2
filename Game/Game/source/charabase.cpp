@@ -1,6 +1,11 @@
 ﻿#include "pch.h"
 #include "charabase.h"
 #include "animationcomponent.h"
+#include "jumpcomponet.h"
+
+CharaBase::CharaBase()
+	: _jump(std::make_unique<JumpComponent>(*this))
+{}
 
 CharaBase::~CharaBase()
 {
@@ -31,6 +36,48 @@ bool CharaBase::Terminate()
 {
 	base::Terminate();
 	return true;
+}
+
+void CharaBase::RequestJump()
+{
+	if(_jump)
+	{
+		_jump->RequestJump();
+	}
+}
+
+bool CharaBase::IsGround() const
+{
+	if(_jump)
+	{
+		return _jump->IsGround();
+	}
+	return false;
+}
+
+void CharaBase::NotifyLand()
+{
+	if(_jump)
+	{
+		_jump->SetGround(true);
+	}
+}
+
+bool CharaBase::GetLand() const
+{
+	if(_jump)
+	{
+		return _jump->IsGround();
+	}
+	return false;
+}
+
+void CharaBase::SetLand(bool land)
+{
+	if(_jump)
+	{
+		_jump->SetGround(land);
+	}
 }
 
 // 計算処理

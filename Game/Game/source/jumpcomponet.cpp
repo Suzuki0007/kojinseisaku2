@@ -1,43 +1,78 @@
 ﻿#include "pch.h"
 #include "jumpcomponet.h"
 
-namespace gv = gravity;
 
 void JumpComponent::Update(float deltaTime)
 {
-	Jump();
+	// ジャンプ1回目
+	if(_jumpRequest && _isGround)
+	{
+		Jump();
+		_jumpRequest = false; // ジャンプ要求をしない
+	}
+	// ジャンプ2回目
+	else if(_jumpRequest && !_isGround && _currentJumpCount < _maxJumpCount)
+	{
+		Jump();
+		_jumpRequest = false; // ジャンプ要求をしない
+
+	}
+	// 落下処理
+	else if(!_isGround)
+	{
+		Fall();
+	}
+}
+
+void JumpComponent::RequestJump()
+{
+	if(_currentJumpCount < _maxJumpCount)
+	{
+		_jumpRequest = true; // ジャンプ要求を出す
+	}
 }
 
 void JumpComponent::Jump()
 {
-	// ジャンプ要求があって、着地していて、攻撃状態でないならジャンプする
-	if(_owner->ConsumeJumpRequest() && _owner->GetLand() && _owner->_status != STA::ATTACK)
-	{
-		_owner->SetJumpCount(false); // ジャンプ回数制限用フラグをfalseにする
-		_owner->SetGravity(_owner->GetJumpHeight());
+	_currentJumpCount++; // ジャンプ回数を増やす
+	_currentGravity = _jumpHeight; // ジャンプの高さを設定する
+	_isGround = false; // 着地していない状態にする
 
-		Vec4 pos = _owner->GetPos();
-		pos.y += _owner->GetGravity();
-		_owner->SetPos(pos);
+	Vec4 pos = _owner->GetPos();
+	pos.y += _currentGravity; // ジャンプの高さ分だけ位置を上げる
+	_owner->SetPos(pos);
 
-		_owner->_status = STA::JUMP; // ジャンプにする
-		_owner->SetLand(false); // 空中にいるので着地フラグをfalseにする
-	}
+	_owner->SetStatus(STA::JUMP); // ジャンプのアニメーション
 }
 
 void JumpComponent::Fall()
 {
-	if(!_owner->GetLand())
+	_currentGravity -= _gravity; // 重力分だけ落下する
+
+	Vec4 pos = _owner->GetPos();
+	pos.y += _currentGravity; // 落下分だけ位置を下げる
+	_owner->SetPos(pos);
+
+	if(_currentGravity < 0.0f)
 	{
-		_owner->SetGravity(_owner->GetGravity() - gv::GRAVITY); // 重力を加算する
-
-		Vec4 pos = _owner->GetPos();
-		pos.y += _owner->GetGravity(); // 現在の重力分だけ位置を下げる
-		_owner->SetPos(pos);
-
-		if(_owner->GetGravity() < 0.0f)
-		{
-			_owner->_status = STA::FALL; // 落下にする
-		}
+		_owner->SetStatus(STA::FALL); // 落下のアニメーション
 	}
+}
+
+void JumpComponent::Land()
+{
+	_isGround = true; // 着地状態にする
+	_currentJumpCount = 0; // ジャンプ回数をリセットする
+	_currentGravity = 0.0f; // 重力をリセットする
+	_owner->SetStatus(STA::LANDING); // 着地のアニメーション
+}
+
+void JumpComponent::SetGround(bool ground)
+{
+	if(ground && !_isGround)
+	{
+		Land(); // 着地処理
+
+	}
+	_isGround = ground;
 }

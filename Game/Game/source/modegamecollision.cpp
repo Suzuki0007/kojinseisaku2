@@ -372,10 +372,10 @@ bool ModeGame::CheckEncount()
 		if(IsHitCircle(player, enemy.get()))
 		{
 			// 戦う敵の番号
-			_enemyIndexBattle = i;
+			//_enemyIndexBattle = i;
 
 			// バトルシーンへ
-			ChangeState(GameState::Battle, i);
+			//ChangeState(GameState::Battle, i);
 
 			return true;
 		}

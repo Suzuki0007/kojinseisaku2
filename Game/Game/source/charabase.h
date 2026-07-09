@@ -3,9 +3,12 @@
 #include "camera.h"
 #include "battlereceiver.h"
 #include "speedcomponent.h"
+
+
 #include "pch.h"
 
 class AnimationComponent;
+class JumpComponent;
 
 class CharaBase : public ObjectBase, public IComponentBindable<CharaBase>, public IBattleReceiver
 {
@@ -33,6 +36,7 @@ public:
 		std::string_view attack;
 	};
 
+	CharaBase();
 	virtual ~CharaBase();
 
 	virtual bool Initialize();
@@ -57,30 +61,8 @@ public:
 	float GetHP() const { return _hp; }	// HP取得用ゲッター
 	bool IsAlive() const { return _is_alive; } // 生存確認用ゲッター
 
-	auto GetLand() const { return _land; }
-	void SetLand(bool land) { _land = land; }
-
-	float GetGravity() const { return _gravity; }
-	void SetGravity(float g) { _gravity = g; }
-
-	float GetJumpHeight() const { return _jumpHeight; }
-	void SetJumpHeight(float h) { _jumpHeight = h; }
-
-	bool GetJumpCount() const { return _jumpCount; }
-	void SetJumpCount(bool v) { _jumpCount = v; }
-
 	auto GetCanControl() const { return _canControl; }
 	void SetCanControl(bool v) { _canControl = v; }
-
-	// ジャンプするかどうか
-	void RequestJump(bool v) { _jumpRequest = true; }
-	// ジャンプ要求があればtrueを返し、要求を消費する
-	bool ConsumeJumpRequest()
-	{
-		if(!_jumpRequest) {return false;}
-		_jumpRequest = false;
-		return true;
-	}
 
 	void AnimationRender(int handle, const Vec4& pos, const Vec4& dir);
 
@@ -105,6 +87,12 @@ public:
 	void SetCharaId(int id) { _charaId = id; }
 	virtual float GetSpeed() const = 0;
 
+	// ジャンプの処理関連
+	void RequestJump();// ジャンプ要求を出す
+	bool IsGround() const;// 着地しているかどうか
+	void NotifyLand();// 着地したことを通知する
+	bool GetLand() const;
+	void SetLand(bool land);
 
 protected:
 	int _attach_index;
@@ -124,13 +112,11 @@ protected:
 
 	int _charaId{ 0 }; // キャラクターID
 
-	bool _land { false };// 着地しているかどうか
-	bool _jumpRequest { false }; // ジャンプ要求フラグ
-	float _jumpHeight { 0.0f }; // ジャンプの高さ
-	float _gravity { 0.0f }; // 重力の強さ
-	bool _jumpCount { true };			// ジャンプ回数制限用フラグ
 	bool _canControl{ true }; // キャラの操作が可能かどうか
 	std::unique_ptr<SpeedComponent<CharaBase>> _speed { std::make_unique<SpeedComponent<CharaBase>>(*this) };
+
+	// ジャンプコンポーネントの所有権を持つ
+	std::unique_ptr<JumpComponent> _jump;
 
 	AnimConfig _animConfig; // アニメーション名の設定
 	AnimationComponent* _anim;
